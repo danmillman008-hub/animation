@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "character-animation-qa": {
+      "source": "calesthio/OpenMontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/character-animation-qa/SKILL.md",
+      "computedHash": "727ca3217c8d69cce95452c3d843db8c78536feaf8c61d0006bb2a62618ef9c7"
+    },
+    "pose-library-design": {
+      "source": "calesthio/OpenMontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/pose-library-design/SKILL.md",
+      "computedHash": "4fca9f6c9774fcdd4a71293d2745cc5492cce960d8e0947679702aaea9dc6030"
+    },
+    "svg-character-animation": {
+      "source": "calesthio/OpenMontage",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/svg-character-animation/SKILL.md",
+      "computedHash": "65a17b9ab121f1fb11af63ff1cc8ab36accf96a36ce8decb82660fe26df6fbf0"
+    }
+  }
+}
