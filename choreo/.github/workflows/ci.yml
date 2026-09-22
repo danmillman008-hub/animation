@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lang:
+    name: DSL compiles + self-verifies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright (used by the compiler's --verify)
+        working-directory: verify
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+      - name: Compile + verify the DSL examples
+        working-directory: lang
+        run: |
+          node src/cli.mjs examples/signup-success.choreo -o out --verify
+          node src/cli.mjs examples/pipeline-diagram.choreo -o out --verify
+          node src/cli.mjs examples/alert-toast.choreo -o out --verify
+
+  verify:
+    name: Verifier demo + planted-regression demo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install + browser
+        working-directory: verify
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+      - name: Demo (expect pass)
+        working-directory: verify
+        run: npm run demo
+      - name: Broken demo (expect it to catch regressions → non-zero exit)
+        working-directory: verify
+        run: |
+          if npm run demo:broken; then
+            echo "::error::demo:broken should have failed (planted regressions not caught)"
+            exit 1
+          else
+            echo "planted regressions correctly caught"
+          fi

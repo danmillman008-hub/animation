@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>signup-flow demo</title>
+<style>
+  body { margin: 0; display: grid; place-items: center; height: 100vh; background: #f1f5f9; font-family: system-ui, sans-serif; }
+  .card {
+    position: relative; width: 320px; height: 220px; background: #fff; border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+    display: flex; flex-direction: column; align-items: center; padding-top: 40px; box-sizing: border-box;
+    animation: card-in 600ms cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes card-in { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
+
+  .check {
+    width: 64px; height: 64px; color: #16a34a;
+    opacity: 0; transform: scale(.3);
+    animation: check-pop 400ms cubic-bezier(.34,1.56,.64,1) 600ms both;
+  }
+  @keyframes check-pop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: scale(1); } }
+  .check circle { stroke-dasharray: 157; stroke-dashoffset: 157; animation: draw 400ms ease-out 600ms both; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  .label {
+    margin-top: 16px; font-size: 18px; font-weight: 600; color: #0f172a;
+    opacity: 0; transform: translateY(8px);
+    animation: label-in 400ms ease-out 1000ms both;
+  }
+  @keyframes label-in { to { opacity: 1; transform: translateY(0); } }
+
+  .sub {
+    margin-top: 6px; font-size: 13px; color: #64748b;
+    opacity: 0; animation: fade 400ms ease-out 1400ms both;
+  }
+  @keyframes fade { to { opacity: 1; } }
+</style>
+</head>
+<body>
+  <div class="card" id="card">
+    <svg class="check" id="check" viewBox="0 0 56 56" fill="none">
+      <circle cx="28" cy="28" r="25" stroke="currentColor" stroke-width="4"/>
+      <path d="M17 29l8 8 14-16" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="label" id="label">Account created</div>
+    <div class="sub" id="sub">Redirecting to your dashboard…</div>
+  </div>
+</body>
+</html>

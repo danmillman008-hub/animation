@@ -1,0 +1,13 @@
+{
+  "name": "v1-onboarding",
+  "duration": 5000,
+  "viewport": { "w": 800, "h": 480 },
+  "entities": { "title": "#title", "item1": "#item1", "item2": "#item2", "item3": "#item3", "tick1": "#tick1", "tick2": "#tick2", "tick3": "#tick3", "cta": "#cta" },
+  "checks": [
+    { "trace": true, "assert": ["appearsBefore(title, item1)", "appearsBefore(item1, item2)", "appearsBefore(item2, item3)", "appearsBefore(item3, cta)"] },
+    { "trace": true, "assert": ["appearsBefore(item1, tick1)", "appearsBefore(item2, tick2)", "appearsBefore(item3, tick3)"] },
+    { "atEnd": true, "assert": ["fadedIn(title)", "fadedIn(item1)", "fadedIn(item2)", "fadedIn(item3)", "fadedIn(tick1)", "fadedIn(tick2)", "fadedIn(tick3)", "fadedIn(cta)", "settled(all)"] },
+    { "atEnd": true, "assert": ["below(item2, item1)", "below(item3, item2)", "below(cta, item3)", "inside(tick1, item1)", "inside(tick2, item2)", "inside(tick3, item3)"] },
+    { "always": true, "assert": ["notOverlapping(item1, item2)", "notOverlapping(item2, item3)"] }
+  ]
+}

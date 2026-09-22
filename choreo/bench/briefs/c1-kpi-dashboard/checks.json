@@ -1,0 +1,22 @@
+{
+  "name": "c1-kpi-dashboard",
+  "duration": 4400,
+  "viewport": { "w": 1000, "h": 600 },
+  "entities": { "header": "#header", "card1": "#card1", "card2": "#card2", "card3": "#card3", "val1": "#val1", "val2": "#val2", "val3": "#val3", "rule": "#rule", "barA": "#barA", "barB": "#barB", "barC": "#barC", "barD": "#barD", "foot": "#foot" },
+  "checks": [
+    { "at": 0, "assert": ["hidden(card1)", "hidden(val1)", "hidden(barA)", "hidden(foot)"] },
+    { "during": [0, 400], "assert": ["fadesIn(header)"] },
+    { "at": 600, "assert": ["visible(card1)", "hidden(card3)"] },
+    { "during": [900, 1250], "assert": ["fadesIn(card3)"] },
+    { "at": 1000, "assert": ["visible(card1)", "hidden(val3)"] },
+    { "during": [1300, 1600], "assert": ["fadesIn(val3)"] },
+    { "during": [1700, 2100], "assert": ["fadesIn(rule)"] },
+    { "at": 2300, "assert": ["hidden(barC)"] },
+    { "during": [2200, 2600], "assert": ["fadesIn(barA)", "movesUp(barA)"] },
+    { "during": [2800, 3200], "assert": ["fadesIn(barD)", "movesUp(barD)"] },
+    { "at": 3200, "assert": ["hidden(foot)"] },
+    { "during": [3400, 3800], "assert": ["fadesIn(foot)"] },
+    { "at": 4000, "assert": ["inside(val1, card1)", "inside(val2, card2)", "inside(val3, card3)", "leftOf(card1, card2)", "leftOf(card2, card3)", "leftOf(barA, barB)", "leftOf(barB, barC)", "leftOf(barC, barD)", "below(foot, barA)"] },
+    { "atEnd": true, "assert": ["fadedIn(header)", "fadedIn(barD)", "fadedIn(foot)", "settled(all)"] }
+  ]
+}

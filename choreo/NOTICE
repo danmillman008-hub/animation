@@ -1,0 +1,9 @@
+Choreo — MIT licensed (see LICENSE).
+
+Third-party components:
+
+- bench/assets/gsap.min.js is GSAP by GreenSock, included as one of the
+  benchmark's four comparison conditions. GSAP is distributed under GreenSock's
+  own license (https://gsap.com/community/standard-license/), NOT under
+  Choreo's MIT license. It is vendored only so the benchmark runs out of the
+  box; remove bench/ if you do not want it.

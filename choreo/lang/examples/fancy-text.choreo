@@ -1,0 +1,60 @@
+// Stress test vs "fancy SVG animation" territory (svgator showcase categories):
+// per-letter text reveal + self-drawing underline + donut progress sweep + spin.
+scene "fancy-text" size 900x420 duration 4200ms background #0b1020
+
+entities
+  l1 = text "C" size 76 weight 800 color #38bdf8
+  l2 = text "H" size 76 weight 800 color #5eead4
+  l3 = text "O" size 76 weight 800 color #34d399
+  l4 = text "R" size 76 weight 800 color #a3e635
+  l5 = text "E" size 76 weight 800 color #fbbf24
+  l6 = text "O" size 76 weight 800 color #fb7185
+  underline = path "M0 4 C 90 -4, 210 12, 300 2" size 300x8 stroke #8f7bff stroke-width 5
+  donut = circle 42 stroke #34d399 stroke-width 10
+  pct   = text "100%" size 20 weight 700 color #e2e8f0
+  star  = path "M20 0 L25 15 L40 20 L25 25 L20 40 L15 25 L0 20 L15 15 Z" size 40x40 fill #fbbf24
+  tag   = text "drawn, swept, spun — and verified" size 15 color #8fa0b8
+
+layout
+  at l1 330 160
+  rightOf l2 l1 gap 14
+  rightOf l3 l2 gap 14
+  rightOf l4 l3 gap 14
+  rightOf l5 l4 gap 14
+  rightOf l6 l5 gap 14
+  at underline 450 225
+  at donut 180 190
+  center pct in donut
+  at star 705 175
+  below tag underline gap 56
+
+motion
+  par
+    seq
+      stagger 90ms
+        slideIn l1 from bottom 26 350ms easeOut
+        slideIn l2 from bottom 26 350ms easeOut
+        slideIn l3 from bottom 26 350ms easeOut
+        slideIn l4 from bottom 26 350ms easeOut
+        slideIn l5 from bottom 26 350ms easeOut
+        slideIn l6 from bottom 26 350ms easeOut
+      drawOn underline 600ms easeOut
+      fadeIn tag 400ms
+    seq
+      wait 300ms
+      drawOn donut 1400ms easeInOut
+      pop pct 350ms
+    seq
+      wait 600ms
+      fadeIn star 250ms
+      spin star 360 900ms easeInOut
+      pulse star 350ms
+
+checks
+  trace : appearsBefore(l1, l2) and appearsBefore(l2, l3) and appearsBefore(l5, l6)
+  trace : appearsBefore(l6, tag) and appearsBefore(donut, pct)
+  at 100 : hidden(l3) and hidden(tag) and hidden(pct)
+  during 90..440 : fadesIn(l1) and movesUp(l1)
+  at 2000 : leftOf(l1, l2) and leftOf(l2, l3) and leftOf(l3, l4) and leftOf(l5, l6)
+  during 1700..2050 : grows(pct) and fadesIn(pct)
+  at end : fadedIn(tag) and fadedIn(pct) and visible(star) and settled(all)

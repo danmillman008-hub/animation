@@ -1,0 +1,35 @@
+{
+  "name": "@choreo-oss/verify",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Spatio-temporal verification for web animations — sample rendered traces, assert first-order predicates, emit agent-readable failure reports.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "choreo-verify": "src/cli.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./cli": "./src/cli.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "examples",
+    "README.md"
+  ],
+  "scripts": {
+    "demo": "node src/cli.mjs examples/demo.spec.mjs",
+    "demo:broken": "node src/cli.mjs examples/demo-broken.spec.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.60.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JieGouAI/choreo.git",
+    "directory": "verify"
+  },
+  "homepage": "https://github.com/JieGouAI/choreo#readme",
+  "bugs": "https://github.com/JieGouAI/choreo/issues"
+}

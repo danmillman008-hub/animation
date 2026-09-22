@@ -1,0 +1,34 @@
+// UI micro-interaction: toast slides in from the right, lingers, slides out.
+scene "alert-toast" size 640x360 duration 3400ms background #f8fafc
+
+entities
+  toast = rect 300x64 fill #0f172a radius 12
+  icon  = circle 12 fill #34d399
+  msg   = text "Deploy finished" size 15 weight 600 color #f1f5f9
+
+layout
+  center toast
+  inside icon toast left 18
+  rightOf msg icon gap 14
+
+motion
+  seq
+    par
+      slideIn toast from right 60 400ms easeOut
+      slideIn icon from right 60 400ms easeOut
+      slideIn msg from right 60 400ms easeOut
+    pulse icon 400ms
+    wait 1400ms
+    par
+      slideOut toast to right 60 350ms easeIn
+      slideOut icon to right 60 350ms easeIn
+      slideOut msg to right 60 350ms easeIn
+
+checks
+  at 0 : hidden(toast) and hidden(msg)
+  during 0..400 : movesLeft(toast) and fadesIn(toast)
+  at 1000 : visible(toast) and visible(icon) and visible(msg)
+  at 1000 : inside(icon, toast) and inside(msg, toast) and rightOf(msg, icon)
+  during 2200..2550 : movesRight(toast) and fadesOut(toast)
+  at end : fadedOut(toast) and fadedOut(icon) and fadedOut(msg)
+  during 1200..2100 : stationary(toast)

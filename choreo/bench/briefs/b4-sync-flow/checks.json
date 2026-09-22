@@ -1,0 +1,17 @@
+{
+  "name": "b4-sync-flow",
+  "duration": 3600,
+  "viewport": { "w": 900, "h": 420 },
+  "entities": { "boxA": "#boxA", "boxB": "#boxB", "dot": "#dot", "done": "#done" },
+  "checks": [
+    { "at": 0, "assert": ["hidden(boxA)", "hidden(dot)", "hidden(done)"] },
+    { "at": 450, "assert": ["visible(boxA)"] },
+    { "during": [200, 550], "assert": ["fadesIn(boxB)", "grows(boxB)"] },
+    { "at": 700, "assert": ["leftOf(dot, boxB)", "overlaps(dot, boxA)"] },
+    { "during": [800, 1800], "assert": ["movesRight(dot)"] },
+    { "at": 2100, "assert": ["overlaps(dot, boxB)", "notOverlapping(dot, boxA)"] },
+    { "during": [2000, 2400], "assert": ["fadesIn(done)"] },
+    { "at": 2600, "assert": ["above(done, boxB)", "leftOf(boxA, boxB)"] },
+    { "atEnd": true, "assert": ["visible(dot)", "fadedIn(done)", "settled(all)"] }
+  ]
+}

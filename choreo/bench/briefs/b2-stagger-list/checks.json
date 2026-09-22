@@ -1,0 +1,16 @@
+{
+  "name": "b2-stagger-list",
+  "duration": 3000,
+  "viewport": { "w": 800, "h": 500 },
+  "entities": { "title": "#title", "row1": "#row1", "row2": "#row2", "row3": "#row3" },
+  "checks": [
+    { "at": 0, "assert": ["hidden(row1)", "hidden(row2)", "hidden(row3)"] },
+    { "during": [0, 400], "assert": ["fadesIn(title)"] },
+    { "at": 780, "assert": ["visible(row1)", "hidden(row3)"] },
+    { "during": [600, 950], "assert": ["movesRight(row1)"] },
+    { "during": [1100, 1450], "assert": ["fadesIn(row3)"] },
+    { "at": 2000, "assert": ["below(row1, title)", "below(row2, row1)", "below(row3, row2)"] },
+    { "always": true, "assert": ["notOverlapping(row1, row2)", "notOverlapping(row2, row3)"] },
+    { "atEnd": true, "assert": ["fadedIn(row1)", "fadedIn(row2)", "fadedIn(row3)", "settled(all)"] }
+  ]
+}

@@ -1,0 +1,27 @@
+scene "toast-lifecycle" size 640x360 duration 3200ms background #f8fafc
+
+entities
+  toast = rect 300x64 fill #0f172a radius 12
+  msg   = text "Saved" size 15 weight 600 color #f1f5f9
+
+layout
+  center toast
+  center msg in toast
+
+motion
+  seq
+    par
+      slideIn toast from right 60 400ms easeOut
+      slideIn msg from right 60 400ms easeOut
+    wait 1800ms
+    par
+      slideOut toast to right 60 400ms easeIn
+      slideOut msg to right 60 400ms easeIn
+
+checks
+  at 0 : hidden(toast) and hidden(msg)
+  during 0..400 : movesLeft(toast) and fadesIn(toast) and movesLeft(msg)
+  at 1200 : visible(toast) and visible(msg) and inside(msg, toast)
+  during 900..2000 : stationary(toast) and stationary(msg)
+  during 2200..2600 : movesRight(toast) and fadesOut(toast)
+  at end : fadedOut(toast) and fadedOut(msg)

@@ -1,0 +1,16 @@
+{
+  "name": "b1-badge-pop",
+  "duration": 2400,
+  "viewport": { "w": 800, "h": 450 },
+  "entities": { "card": "#card", "badge": "#badge", "label": "#label" },
+  "checks": [
+    { "at": 0, "assert": ["hidden(badge)", "hidden(label)"] },
+    { "during": [0, 500], "assert": ["fadesIn(card)"] },
+    { "at": 560, "assert": ["fadedIn(card)"] },
+    { "during": [600, 1000], "assert": ["fadesIn(badge)", "grows(badge)"] },
+    { "at": 900, "assert": ["hidden(label)"] },
+    { "during": [1100, 1500], "assert": ["fadesIn(label)", "movesUp(label)"] },
+    { "at": 1800, "assert": ["below(label, badge)", "inside(badge, card)", "inside(label, card)"] },
+    { "atEnd": true, "assert": ["fadedIn(card)", "fadedIn(badge)", "fadedIn(label)", "settled(all)"] }
+  ]
+}

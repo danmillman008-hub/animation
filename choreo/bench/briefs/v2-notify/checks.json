@@ -1,0 +1,12 @@
+{
+  "name": "v2-notify",
+  "duration": 5000,
+  "viewport": { "w": 700, "h": 420 },
+  "entities": { "panel": "#panel", "bell": "#bell", "badgeN": "#badgeN", "card1": "#card1", "card2": "#card2", "card3": "#card3" },
+  "checks": [
+    { "trace": true, "assert": ["everVisible(panel)", "appearsBefore(bell, badgeN)", "appearsBefore(badgeN, card1)", "appearsBefore(card1, card2)", "appearsBefore(card2, card3)"] },
+    { "atEnd": true, "assert": ["fadedOut(badgeN)", "fadedIn(bell)", "fadedIn(card1)", "fadedIn(card2)", "fadedIn(card3)", "settled(all)"] },
+    { "atEnd": true, "assert": ["below(card2, card1)", "below(card3, card2)", "inside(card1, panel)", "inside(card2, panel)", "inside(card3, panel)", "inside(bell, panel)", "overlaps(badgeN, bell)"] },
+    { "always": true, "assert": ["notOverlapping(card1, card2)", "notOverlapping(card2, card3)"] }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "e2-exit-down",
+  "duration": 3200,
+  "viewport": { "w": 640, "h": 360 },
+  "entities": { "toast": "#toast", "msg": "#msg" },
+  "checks": [
+    { "at": 0, "assert": ["hidden(toast)", "hidden(msg)"] },
+    { "during": [0, 400], "assert": ["movesLeft(toast)", "fadesIn(toast)"] },
+    { "at": 1200, "assert": ["visible(toast)", "visible(msg)", "inside(msg, toast)"] },
+    { "during": [1800, 2200], "assert": ["fadesOut(msg)", "stationary(msg)"] },
+    { "during": [2200, 2600], "assert": ["movesDown(toast)", "fadesOut(toast)"] },
+    { "atEnd": true, "assert": ["fadedOut(toast)", "fadedOut(msg)"] }
+  ]
+}

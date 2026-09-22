@@ -1,0 +1,14 @@
+{
+  "name": "e1-reorder",
+  "duration": 2400,
+  "viewport": { "w": 800, "h": 450 },
+  "entities": { "card": "#card", "badge": "#badge", "label": "#label" },
+  "checks": [
+    { "at": 0, "assert": ["fadedIn(card)", "hidden(label)", "hidden(badge)"] },
+    { "during": [100, 500], "assert": ["fadesIn(label)", "movesUp(label)"] },
+    { "at": 550, "assert": ["visible(label)", "hidden(badge)"] },
+    { "during": [600, 1000], "assert": ["fadesIn(badge)", "grows(badge)"] },
+    { "at": 1300, "assert": ["below(label, badge)", "inside(badge, card)", "inside(label, card)"] },
+    { "atEnd": true, "assert": ["fadedIn(card)", "fadedIn(badge)", "fadedIn(label)", "settled(all)"] }
+  ]
+}

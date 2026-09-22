@@ -1,0 +1,31 @@
+name: Auto-approve owner PRs
+
+# Auto-approves PRs authored by `shyan-ai` (the founder) so the SOC 2
+# branch-protection 1-approval requirement on `main` is satisfied without a
+# second human — the same pattern the monorepo (JieGouAI/orion) uses.
+#
+# This mirror is synced from the monorepo via the `choreo-oss-sync` skill; those
+# sync PRs are authored by shyan-ai and are already gated (internal-reference +
+# secret scans in sync.sh) before they reach here. With `enforce_admins` ON, an
+# admin can't bypass the review requirement, so this approval is what lets the
+# automated sync merge.
+#
+# REQUIRES repo setting: Settings → Actions → General →
+#   "Allow GitHub Actions to create and approve pull requests" = ON.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    if: github.actor == 'shyan-ai'
+    steps:
+      - name: Approve PR
+        uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

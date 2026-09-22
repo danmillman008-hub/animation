@@ -1,0 +1,3 @@
+runs/**/.choreo/
+runs/*/choreo/*.html
+runs/*/choreo/*.spec.mjs

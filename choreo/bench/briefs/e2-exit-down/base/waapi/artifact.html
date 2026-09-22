@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>B3 — toast-lifecycle (waapi)</title>
+<style>
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e2e8f0;
+  }
+  #canvas {
+    position: relative;
+    width: 640px;
+    height: 360px;
+    background: #f8fafc;
+    overflow: hidden;
+  }
+  #toast {
+    position: absolute;
+    left: 170px;   /* (640 - 300) / 2 */
+    top: 148px;    /* (360 - 64) / 2 */
+    width: 300px;
+    height: 64px;
+    background: #0f172a;
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  #msg {
+    position: absolute;
+    left: 170px;
+    top: 148px;
+    width: 300px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #f1f5f9;
+    opacity: 0;
+    transform: translateX(60px);
+  }
+</style>
+</head>
+<body>
+  <div id="canvas">
+    <div id="toast"></div>
+    <div id="msg">Saved</div>
+  </div>
+  <script>
+    var toast = document.getElementById('toast');
+    var msg = document.getElementById('msg');
+
+    var enterFrames = [
+      { transform: 'translateX(60px)', opacity: 0 },
+      { transform: 'translateX(0px)',  opacity: 1 }
+    ];
+    var exitFrames = [
+      { transform: 'translateX(0px)',  opacity: 1 },
+      { transform: 'translateX(60px)', opacity: 0 }
+    ];
+
+    // 0–400ms: slide in from the right (~60px) + fade in; fill 'both'
+    // holds the settled state through the 400–2200ms hold.
+    var enterOpts = { duration: 400, delay: 0, easing: 'ease-out', fill: 'both' };
+    // 2200–2600ms: slide out to the right (~60px) + fade out; fill
+    // 'forwards' keeps the faded-out state until the 3200ms scene end.
+    // (Before 2200ms this animation is not in effect, so the enter
+    // animation's forward fill governs the hold phase.)
+    var exitOpts = { duration: 400, delay: 2200, easing: 'ease-in', fill: 'forwards' };
+
+    toast.animate(enterFrames, enterOpts);
+    msg.animate(enterFrames, enterOpts);
+    toast.animate(exitFrames, exitOpts);
+    msg.animate(exitFrames, exitOpts);
+  </script>
+</body>
+</html>

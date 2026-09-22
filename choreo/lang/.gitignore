@@ -1,0 +1,4 @@
+out/
+out-eval/*/*.html
+out-eval/*/*.spec.mjs
+out-eval/*/.choreo/

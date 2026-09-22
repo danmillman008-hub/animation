@@ -1,0 +1,29 @@
+scene "badge-pop" size 800x450 duration 2400ms background #f1f5f9
+
+entities
+  card  = rect 320x200 fill #ffffff radius 12
+  badge = circle 28 fill #16a34a
+  label = text "Payment received" size 18 weight 600 color #0f172a
+
+layout
+  center card
+  inside badge card top 36
+  below label badge gap 18
+
+motion
+  seq
+    fadeIn card 500ms easeOut          // 0..500
+    wait 100ms
+    pop badge 400ms spring             // 600..1000
+    wait 100ms
+    slideIn label from bottom 10 400ms easeOut  // 1100..1500
+
+checks
+  at 0 : hidden(badge) and hidden(label)
+  during 0..500 : fadesIn(card)
+  at 560 : fadedIn(card)
+  during 600..1000 : fadesIn(badge) and grows(badge)
+  at 900 : hidden(label)
+  during 1100..1500 : fadesIn(label) and movesUp(label)
+  at 1800 : below(label, badge) and inside(badge, card) and inside(label, card)
+  at end : fadedIn(card) and fadedIn(badge) and fadedIn(label) and settled(all)

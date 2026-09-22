@@ -1,0 +1,53 @@
+// Explainer diagram: three pipeline stages pop in staggered, arrows draw on.
+scene "pipeline-diagram" size 900x420 duration 3000ms background #0f172a
+
+entities
+  title = text "How the pipeline works" size 24 weight 700 color #e2e8f0
+  box1  = rect 170x90 fill #1e293b radius 10 stroke #38bdf8 stroke-width 2
+  box2  = rect 170x90 fill #1e293b radius 10 stroke #a78bfa stroke-width 2
+  box3  = rect 170x90 fill #1e293b radius 10 stroke #34d399 stroke-width 2
+  lbl1  = text "Ingest" size 16 weight 600 color #38bdf8
+  lbl2  = text "Transform" size 16 weight 600 color #a78bfa
+  lbl3  = text "Publish" size 16 weight 600 color #34d399
+  a1    = arrow 100 stroke #64748b stroke-width 3
+  a2    = arrow 100 stroke #64748b stroke-width 3
+
+layout
+  center box2
+  offset box2 0 30
+  leftOf box1 box2 gap 120
+  rightOf box3 box2 gap 120
+  center lbl1 in box1
+  center lbl2 in box2
+  center lbl3 in box3
+  rightOf a1 box1 gap 10
+  rightOf a2 box2 gap 10
+  above title box2 gap 80
+
+motion
+  seq
+    fadeIn title 400ms easeOut
+    stagger 200ms
+      par
+        pop box1 350ms
+        fadeIn lbl1 350ms
+      par
+        pop box2 350ms
+        fadeIn lbl2 350ms
+      par
+        pop box3 350ms
+        fadeIn lbl3 350ms
+    par
+      drawOn a1 500ms easeOut
+      drawOn a2 500ms easeOut
+
+checks
+  at 100 : hidden(box1) and hidden(box2) and hidden(box3)
+  during 0..400 : fadesIn(title)
+  at 700 : visible(box1) and hidden(box3)
+  during 800..1150 : grows(box3) and fadesIn(box3)
+  at 1300 : leftOf(box1, box2) and leftOf(box2, box3)
+  at 1300 : inside(lbl1, box1) and inside(lbl2, box2) and inside(lbl3, box3)
+  at 1300 : rightOf(a1, box1) and leftOf(a1, box2)
+  at end : visible(title) and settled(all)
+  always : onScreen(box1) and onScreen(box3)

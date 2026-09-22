@@ -1,0 +1,36 @@
+// Flagship example — the concept doc's signup-success scene, in real Choreo.
+scene "signup-success" size 800x450 duration 2600ms background #f1f5f9
+
+entities
+  card  = rect 320x220 fill #ffffff radius 12
+  ring  = circle 30 stroke #16a34a stroke-width 4
+  tick  = path "M8 16 L14 22 L24 10" size 32x32 stroke #16a34a stroke-width 4
+  label = text "Account created" size 18 weight 600 color #0f172a
+  sub   = text "Redirecting to your dashboard" size 13 color #64748b
+
+layout
+  center card
+  inside ring card top 36
+  center tick in ring
+  below label ring gap 18
+  below sub label gap 8
+
+motion
+  seq
+    fadeIn card 500ms easeOut
+    par
+      pop ring 400ms
+      drawOn tick 450ms easeOut
+    slideIn label from bottom 10 400ms easeOut
+    fadeIn sub 400ms
+
+checks
+  at 100 : hidden(ring) and hidden(label) and hidden(sub)
+  during 0..500 : fadesIn(card)
+  during 500..900 : grows(ring) and fadesIn(ring)
+  at 850 : hidden(label)
+  during 900..1300 : fadesIn(label) and movesUp(label)
+  during 1300..1700 : fadesIn(sub)
+  at 1800 : below(label, ring) and below(sub, label)
+  always : inside(ring, card) and inside(label, card) and inside(sub, card)
+  at end : fadedIn(card) and fadedIn(label) and fadedIn(sub) and settled(all)

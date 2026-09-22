@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>B1 — badge-pop (waapi)</title>
+<style>
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+  }
+  #canvas {
+    position: relative;
+    width: 800px;
+    height: 450px;
+    background: #f1f5f9;
+    overflow: hidden;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  /* card: ~320x200, centered in the 800x450 canvas */
+  #card {
+    position: absolute;
+    left: 240px;   /* (800 - 320) / 2 */
+    top: 125px;    /* (450 - 200) / 2 */
+    width: 320px;
+    height: 200px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    opacity: 0;    /* pre-entrance state */
+  }
+  /* badge: circle r=28, horizontally centered in card, 36px from card top */
+  #badge {
+    position: absolute;
+    left: 132px;   /* (320 - 56) / 2 */
+    top: 36px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #16a34a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 700;
+    opacity: 0;    /* pre-entrance state */
+  }
+  /* label: below badge with ~18px gap (badge bottom = 36 + 56 = 92; 92 + 18 = 110) */
+  #label {
+    position: absolute;
+    left: 0;
+    top: 110px;
+    width: 100%;
+    text-align: center;
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 600;
+    opacity: 0;    /* pre-entrance state */
+  }
+</style>
+</head>
+<body>
+  <div id="canvas">
+    <div id="card">
+      <div id="badge">&#10003;</div>
+      <div id="label">Payment received</div>
+    </div>
+  </div>
+
+  <script>
+    // All timing via WAAPI delay/duration only. Scene duration: 2400ms;
+    // every animation finishes by 1500ms and holds via fill:'both'.
+
+    // 0–500: card fades in
+    document.getElementById('card').animate(
+      [ { opacity: 0 }, { opacity: 1 } ],
+      { delay: 0, duration: 500, easing: 'ease-out', fill: 'both' }
+    );
+
+    // 600–1000: badge pops in (scale 0.3→1 with springy overshoot + fade in)
+    document.getElementById('badge').animate(
+      [
+        { opacity: 0, transform: 'scale(0.3)' },
+        { opacity: 1, transform: 'scale(1.15)', offset: 0.65 },
+        { opacity: 1, transform: 'scale(0.96)', offset: 0.85 },
+        { opacity: 1, transform: 'scale(1)' }
+      ],
+      { delay: 600, duration: 400, easing: 'ease-out', fill: 'both' }
+    );
+
+    // 1100–1500: label slides up ~10px + fades in
+    document.getElementById('label').animate(
+      [
+        { opacity: 0, transform: 'translateY(10px)' },
+        { opacity: 1, transform: 'translateY(0)' }
+      ],
+      { delay: 1100, duration: 400, easing: 'ease-out', fill: 'both' }
+    );
+  </script>
+</body>
+</html>
