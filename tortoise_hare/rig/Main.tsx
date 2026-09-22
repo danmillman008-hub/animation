@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Audio, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { Character, CharState, Defs, Pose, addPose, blinkAt, ease, gait, lerp, lerpPose, mix, noise, seq } from "./Rig";
+import { Character, CharState, Defs, Pose, addPose, blinkAt, ease, followThrough, gait, lerp, lerpPose, mix, noise, seq } from "./Rig";
 import { Background, BgKind, Crowd, Dust, FinishLine, GROUND, SpeedLines, Zzz, Sweat, Exclaim } from "./backgrounds";
 
 const L = { thighF: "thigh_f", shinF: "shin_f", thighB: "thigh_b", shinB: "shin_b", uarmF: "uarm_f", larmF: "larm_f", uarmB: "uarm_b", larmB: "larm_b", shoeF: "shoe_f", shoeB: "shoe_b", head: "head", torso: "torso" };
@@ -38,11 +38,20 @@ const T = {
   hush: { torso: { rot: 4 }, head: { rot: 6 }, uarm_f: { rot: -30 }, larm_f: { rot: -130 }, hand_f: { rot: -40 } } as Pose,
   lean: { torso: { rot: -6 }, head: { rot: -8 }, uarm_f: { rot: -20 }, larm_f: { rot: -30 }, uarm_b: { rot: 15 }, larm_b: { rot: -20 } } as Pose,
   armsCrossed: { torso: { rot: -2 }, uarm_f: { rot: -25 }, larm_f: { rot: -95 }, hand_f: { rot: -30 }, uarm_b: { rot: -10 }, larm_b: { rot: -95 }, hand_b: { rot: -20 } } as Pose,
+  shrug: { torso: { rot: -2 }, head: { rot: 6 }, neck: { rot: 3 }, uarm_f: { rot: -35 }, larm_f: { rot: -110 }, uarm_b: { rot: 30 }, larm_b: { rot: -110 } } as Pose,
+  pointAhead: { torso: { rot: -6 }, head: { rot: -4 }, uarm_f: { rot: -95 }, larm_f: { rot: -5 }, uarm_b: { rot: 10 }, larm_b: { rot: -15 }, thigh_f: { rot: -8 }, thigh_b: { rot: 6 } } as Pose,
+  chinTap: { torso: { rot: 2 }, head: { rot: 8 }, uarm_f: { rot: -20 }, larm_f: { rot: -140 }, uarm_b: { rot: 4 }, larm_b: { rot: -8 } } as Pose,
   ready: { torso: { rot: -8 }, head: { rot: -4 }, uarm_f: { rot: -30 }, larm_f: { rot: -60 }, uarm_b: { rot: 25 }, larm_b: { rot: -50 }, thigh_f: { rot: -20 }, shin_f: { rot: 20 }, thigh_b: { rot: 14 }, shin_b: { rot: 10 } } as Pose,
 };
 
 type Frame = { hare?: CharState; tort?: CharState; camX?: number; camY?: number; zoom?: number; fx?: React.ReactNode; fxBack?: React.ReactNode };
 type Sc = { id: string; start: number; end: number; bg: BgKind; solve: (t: number) => Frame };
+// follow-through wrappers: sample the sequence slightly earlier to derive velocity (overlapping action)
+const DT = 1 / 30;
+const FT_T = [{ part: "hair", parent: "head", k: 0.05, max: 9 }, { part: "hair_back", parent: "head", k: 0.08, max: 14 }, { part: "larm_f", parent: "uarm_f", k: 0.04, max: 12 }, { part: "larm_b", parent: "uarm_b", k: 0.04, max: 12 }];
+const FT_H = [{ part: "larm_f", parent: "uarm_f", k: 0.04, max: 12 }, { part: "larm_b", parent: "uarm_b", k: 0.04, max: 12 }, { part: "head", parent: "torso", k: 0.03, max: 6 }];
+const seqT = (t: number, keys: [number, Pose, any?][]) => followThrough(seq(t, keys), seq(t - DT, keys), DT, FT_T);
+const seqH = (t: number, keys: [number, Pose, any?][]) => followThrough(seq(t, keys), seq(t - DT, keys), DT, FT_H);
 const st = (x: number, facing: 1 | -1, scale: number, pose: Pose, extra: Partial<CharState> = {}): CharState => ({ x, y: 0, facing, scale, pose, ...extra });
 const breathe = (t: number, k = 1, seed = 0): Pose => ({
   torso: { rot: noise(t * 0.9, seed) * 0.9 * k, y: Math.sin(t * 2.0 + seed) * 2.2 * k },
@@ -61,7 +70,7 @@ export const SCENES: Sc[] = [
   { id: "sc1", start: 0, end: 9.0, bg: "meadow", solve: (t) => {
     const g = gait("sprint", (t * 3.4) % 1, L);
     const runK = mix(t, 3.05, 3.3, "out") * (1 - mix(t, 5.2, 5.55));
-    let pose = seq(t, [[0, H.idle], [1.0, H.idle], [1.5, H.flex, "backOut"], [2.6, H.flex], [3.0, H.idle, "out"], [5.6, H.idle], [6.1, H.thumb, "backOut"], [7.3, H.thumb], [8.0, H.handsHips, "backOut"]]);
+    let pose = seqH(t, [[0, H.idle], [1.0, H.idle], [1.5, H.flex, "backOut"], [2.6, H.flex], [3.0, H.idle, "out"], [5.6, H.idle], [6.1, H.thumb, "backOut"], [7.3, H.thumb], [8.0, H.handsHips, "backOut"]]);
     pose = addPose(pose, g.pose, runK); pose = addPose(pose, breathe(t), 1 - runK);
     // anticipation squash before burst, stretch during
     const squash = 0.12 * mix(t, 2.75, 3.0, "out") * (1 - mix(t, 3.0, 3.25, "out")) - 0.05 * runK;
@@ -72,20 +81,22 @@ export const SCENES: Sc[] = [
   { id: "sc2", start: 9.0, end: 18.1, bg: "meadow", solve: (t) => {
     const w = tortWalk(t, 0.55);
     const tx = lerp(-160, 640, mix(t, 0, 8.6, "linear"));
-    const tort = st(tx, 1, TS, addPose(addPose(w.pose, T.idle), breathe(t, 0.5, 9)), { bob: w.bob, lean: w.lean, face: TF.neutral, blink: blinkAt(t, 1.1, 4.3) });
+    const walkK = 1 - mix(t, 6.9, 7.4, "inOut"); // she stops walking when he points at her
+    const react = seqT(t, [[0, T.idle], [6.9, T.idle], [7.5, T.chinTap, "inOut"], [8.4, T.chinTap], [9.0, T.shrug, "inOut"]]);
+    const tort = st(Math.min(tx, 560), 1, TS, addPose(addPose(lerpPose(react, w.pose, walkK), walkK > 0.5 ? T.idle : {}), breathe(t, 0.5, 9)), { bob: w.bob * walkK, lean: w.lean * walkK, face: face(t, [[0, TF.neutral], [7.5, TF.oh], [8.6, TF.smile]]), blink: blinkAt(t, 1.1, 4.3) });
     const shake = (a: number) => addPose(H.laugh, { torso: { rot: a }, head: { rot: a * 0.6 }, hips: { y: -a * 0.3 } });
-    const hp = seq(t, [[0, H.handsHips], [2.0, H.handsHips], [2.5, addPose(H.handsHips, { head: { rot: 10 }, torso: { rot: 4 } }), "out"], [3.6, addPose(H.handsHips, { head: { rot: 10 }, torso: { rot: 4 } })],
+    const hp = seqH(t, [[0, H.handsHips], [2.0, H.handsHips], [2.5, addPose(H.handsHips, { head: { rot: 10 }, torso: { rot: 4 } }), "out"], [3.6, addPose(H.handsHips, { head: { rot: 10 }, torso: { rot: 4 } })],
       [3.95, H.laughUp, "backOut"], [4.25, H.laugh, "in"], [4.45, shake(-6)], [4.65, shake(6)], [4.85, shake(-6)], [5.05, shake(5)], [5.3, H.laughUp, "out"], [5.6, H.laugh, "in"], [5.8, shake(-5)], [6.0, shake(5)],
       [6.4, H.point, "backOut"], [8.3, H.point], [8.9, H.handsHips, "inOut"]]);
     return { tort, hare: st(1250, -1, HS, addPose(hp, breathe(t)), { face: face(t, [[0, HF.smirk], [2.5, HF.frown], [3.95, HF.grin], [6.4, HF.talk], [7.6, HF.grin], [8.3, HF.smirk]]), blink: blinkAt(t, 0.7) }), zoom: 1.04 };
   } },
   // 3 — the challenge: tortoise calm "let us race"; crowd & finish line; hare crouches
   { id: "sc3", start: 18.1, end: 28.3, bg: "finish", solve: (t) => {
-    const tp = seq(t, [[0, T.idle], [0.5, T.nod, "out"], [1.1, T.idle], [2.1, T.offer, "backOutSoft"], [4.3, T.offer], [4.9, T.armsCrossed, "inOut"], [7.2, T.armsCrossed], [7.8, T.ready, "inOut"]]);
-    const hp = seq(t, [[0, H.handsHips], [2.4, H.handsHips], [3.1, H.thumb, "backOut"], [4.9, H.thumb], [5.4, H.stretch, "inOut"], [6.2, H.stretch], [6.8, H.crouch, "inOut"], [10.5, H.crouch]]);
+    const tp = seqT(t, [[0, T.shrug], [0.5, T.nod, "out"], [1.1, T.idle], [2.1, T.offer, "backOutSoft"], [3.4, T.offer], [4.0, T.pointAhead, "inOut"], [5.2, T.pointAhead], [5.8, T.armsCrossed, "inOut"], [7.2, T.armsCrossed], [7.8, T.ready, "inOut"]]);
+    const hp = seqH(t, [[0, H.handsHips], [2.4, H.handsHips], [2.9, H.laughUp, "backOut"], [3.3, H.laugh, "in"], [3.7, H.laughUp], [4.1, H.thumb, "backOut"], [4.9, H.thumb], [5.4, H.stretch, "inOut"], [6.2, H.stretch], [6.8, H.crouch, "inOut"], [10.5, H.crouch]]);
     const crowdK = mix(t, 4.6, 5.6, "backOutSoft");
     return { tort: st(760, 1, TS, addPose(tp, breathe(t, 0.5, 9)), { face: face(t, [[0, TF.neutral], [2.1, TF.smile], [4.9, TF.happy]]), blink: blinkAt(t, 2.0, 4.1) }),
-      hare: st(1080, 1, HS, addPose(hp, breathe(t)), { face: face(t, [[0, HF.smirk], [3.1, HF.grin], [6.8, HF.frown]]), blink: blinkAt(t, 0.2) }),
+      hare: st(1080, 1, HS, addPose(hp, breathe(t)), { face: face(t, [[0, HF.smirk], [2.9, HF.grin], [4.1, HF.wink], [4.9, HF.grin], [6.8, HF.frown]]), blink: blinkAt(t, 0.2) }),
       zoom: 1.02, fxBack: <><g opacity={crowdK} transform={`translate(0 ${(1 - crowdK) * 40})`}><Crowd x={1500} g={GROUND.finish} t={t} cheer={0} /></g><FinishLine x={1750} g={GROUND.finish} ribbon={0} /></> };
   } },
   // 4 — READY SET GO: anticipation, explosive start, tortoise one step
@@ -96,7 +107,7 @@ export const SCENES: Sc[] = [
     const hx = 560 + Math.pow(dt, 1.5) * 1000;
     const g = gait("sprint", (t * 3.8) % 1, L);
     // anticipation: sink deeper then explode
-    let hp = seq(t, [[0, H.crouch], [go - 0.5, H.crouch], [go - 0.15, addPose(H.crouch, { hips: { y: 14 }, torso: { rot: 6 } }), "inOut"], [go, addPose(H.crouch, { hips: { y: -40 }, torso: { rot: -20 } }), "out"]]);
+    let hp = seqH(t, [[0, H.crouch], [go - 0.5, H.crouch], [go - 0.15, addPose(H.crouch, { hips: { y: 14 }, torso: { rot: 6 } }), "inOut"], [go, addPose(H.crouch, { hips: { y: -40 }, torso: { rot: -20 } }), "out"]]);
     hp = lerpPose(hp, g.pose, runK);
     const squash = 0.14 * mix(t, go - 0.5, go - 0.15) * (1 - mix(t, go - 0.15, go + 0.05)) - 0.12 * mix(t, go - 0.1, go + 0.05) * (1 - mix(t, go + 0.05, go + 0.4));
     // tortoise: one deliberate step at 6.4 and another at 8.4
@@ -114,7 +125,7 @@ export const SCENES: Sc[] = [
     const g = gait("walk", (t * 1.5) % 1, L);
     const walkK = 1 - mix(t, 1.7, 2.3);
     const hx = lerp(-120, 700, mix(t, 0, 2.3, "out"));
-    let hp = seq(t, [[0, H.idle], [2.1, H.idle], [2.7, H.lookBack, "inOut"], [4.1, H.lookBack], [4.7, H.yawn, "inOut"], [5.7, addPose(H.yawn, { head: { rot: -32 } })], [6.4, H.stretch, "inOut"], [7.0, H.handsHips], [7.6, H.sit, "inOut"], [8.7, H.sit], [9.7, H.lie, "inOut"], [11.9, H.lie]]);
+    let hp = seqH(t, [[0, H.idle], [2.1, H.idle], [2.7, H.lookBack, "inOut"], [4.1, H.lookBack], [4.7, H.yawn, "inOut"], [5.7, addPose(H.yawn, { head: { rot: -32 } })], [6.4, H.stretch, "inOut"], [7.0, H.handsHips], [7.6, H.sit, "inOut"], [8.7, H.sit], [9.7, H.lie, "inOut"], [11.9, H.lie]]);
     hp = addPose(hp, g.pose, walkK); hp = addPose(hp, breathe(t, t > 9.7 ? 1.8 : 1));
     const asleep = t > 10.3;
     const facing: 1 | -1 = t > 2.7 && t < 4.4 ? -1 : 1;
@@ -140,7 +151,7 @@ export const SCENES: Sc[] = [
     const stopX = 1480;
     const hx = Math.min(hxRaw, stopX);
     const arrived = hxRaw >= stopX;
-    let hp = seq(t, [[0, H.lie], [wake, H.jolt, "backOut"], [wake + 0.45, H.jolt], [run - 0.2, addPose(H.crouch, { hips: { y: 30 } }), "out"], [run, H.idle, "out"]]);
+    let hp = seqH(t, [[0, H.lie], [wake, H.jolt, "backOut"], [wake + 0.45, H.jolt], [run - 0.2, addPose(H.crouch, { hips: { y: 30 } }), "out"], [run, H.idle, "out"]]);
     hp = lerpPose(hp, g.pose, runK);
     const slumpK = mix(t, cross + 0.35, cross + 1.0, "backOutSoft");
     hp = lerpPose(hp, H.kneel, arrived ? slumpK : 0);
@@ -155,8 +166,8 @@ export const SCENES: Sc[] = [
   } },
   // 8 — sunset moral: handshake-ish, wave
   { id: "sc8", start: 64.5, end: 68.5, bg: "sunset", solve: (t) => {
-    const tp = seq(t, [[0, T.idle], [0.5, T.wave, "backOut"], [1.0, addPose(T.wave, { larm_f: { rot: -80 } })], [1.5, T.wave], [2.0, addPose(T.wave, { larm_f: { rot: -80 } })], [2.6, T.idle, "inOut"]]);
-    const hp = seq(t, [[0, H.slump], [0.7, H.scratch, "inOut"], [2.2, H.scratch], [2.9, H.thumb, "backOut"]]);
+    const tp = seqT(t, [[0, T.idle], [0.5, T.wave, "backOut"], [1.0, addPose(T.wave, { larm_f: { rot: -80 } })], [1.5, T.wave], [2.0, addPose(T.wave, { larm_f: { rot: -80 } })], [2.6, T.idle, "inOut"]]);
+    const hp = seqH(t, [[0, H.slump], [0.7, H.scratch, "inOut"], [1.8, H.scratch], [2.3, addPose(H.slump, { torso: { rot: 12 }, head: { rot: 6 } }), "inOut"], [2.9, H.thumb, "backOut"]]);
     return { tort: st(760, 1, TS, addPose(tp, breathe(t, 0.5, 9)), { face: TF.happy, blink: blinkAt(t, 1.0, 4.4) }), hare: st(1090, -1, HS, addPose(hp, breathe(t)), { face: face(t, [[0, HF.frown], [0.7, HF.smirk], [2.9, HF.grin]]), blink: blinkAt(t, 0.3) }), zoom: 1 + 0.05 * mix(t, 0, 4, "linear") };
   } },
 ];

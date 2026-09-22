@@ -1,6 +1,6 @@
 # Tortoise & Hare — rigged 2D animation (OpenMontage / Remotion)
 
-- `videos/` — all renders. `tortoise_and_hare_v5.mp4` is the latest (rig fixes + joint constraints + QA).
+- `videos/` — all renders. `tortoise_and_hare_v6.mp4` is the latest (shoulder sockets fixed, anticipation/overshoot on all pose changes, hair & forearm follow-through, richer acting).
 - `rig/` — Remotion sources: `Rig.tsx` (FK renderer, `clampJoint`, `validateRig`, joint caps), `Main.tsx` (scenes/poses),
   `characters.ts` (generated part artwork + rig data), `rig_plan_hare.json` / `rig_plan_tort.json`
   (pivots in artwork coordinates + rotation constraints per part, per the character-rigging skill),

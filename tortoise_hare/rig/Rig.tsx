@@ -40,14 +40,45 @@ export function addPose(a: Pose, b: Pose, w = 1): Pose {
   });
   return out;
 }
-// blend a sequence of keyed poses
-export function seq(t: number, keys: [number, Pose, EaseName?][]): Pose {
+// blend a sequence of keyed poses.
+// Motion-quality upgrade (12 principles): every transition gets
+//   anticipation  – a short move *against* the direction of travel before the main move,
+//   overshoot     – the main move passes the target slightly and settles back (follow-through),
+//   slow-in/out   – cubic ease on the main move.
+// The amounts scale with how big the pose change is (measured in degrees of max joint delta), so small
+// adjustments stay subtle and big gestures feel snappy. Eases named in the key are still honoured.
+export const poseDelta = (a: Pose, b: Pose) => { let m = 0; new Set([...Object.keys(a), ...Object.keys(b)]).forEach((k) => { m = Math.max(m, Math.abs(((b[k] || {}).rot ?? 0) - ((a[k] || {}).rot ?? 0))); }); return m; };
+export function seq(t: number, keys: [number, Pose, EaseName?][], opts: { antic?: number; over?: number } = {}): Pose {
+  const antic = opts.antic ?? 0.08, over = opts.over ?? 0.06;
   if (t <= keys[0][0]) return keys[0][1];
   for (let i = 0; i < keys.length - 1; i++) {
     const [t0, p0] = keys[i]; const [t1, p1, e] = keys[i + 1];
-    if (t < t1) return lerpPose(p0, p1, ease[e ?? "inOut"]((t - t0) / (t1 - t0)));
+    if (t < t1) {
+      const u = (t - t0) / (t1 - t0);
+      const big = Math.min(1, poseDelta(p0, p1) / 60); // 0..1 how large the move is
+      if (e === "linear" || e === "elastic" || e === "bounce" || big < 0.05) return lerpPose(p0, p1, ease[e ?? "inOut"](u));
+      const aA = antic * big, oA = over * big;
+      // phase 1 (0..0.2): anticipation dip to -aA ; phase 2 (0.2..0.8): main move to 1+oA ; phase 3 (0.8..1): settle to 1
+      let p: number;
+      if (u < 0.2) p = -aA * ease.out(u / 0.2);
+      else if (u < 0.8) p = lerp(-aA, 1 + oA, ease[e === "backOut" || e === "backOutSoft" ? "inOut" : (e ?? "inOut")]((u - 0.2) / 0.6));
+      else p = lerp(1 + oA, 1, ease.inOut((u - 0.8) / 0.2));
+      return lerpPose(p0, p1, p);
+    }
   }
   return keys[keys.length - 1][1];
+}
+// Secondary motion / overlapping action: given a pose sampled at t and t-dt, add lag to trailing parts
+// (hair, forearms) proportional to the angular velocity of their parent. Keeps motion from feeling "all at once".
+export function followThrough(now: Pose, before: Pose, dt: number, spec: { part: string; parent: string; k: number; max: number }[]): Pose {
+  const out: Pose = { ...now };
+  for (const s of spec) {
+    const v = (((now[s.parent] || {}).rot ?? 0) - ((before[s.parent] || {}).rot ?? 0)) / Math.max(1e-3, dt); // deg/s
+    const lag = Math.max(-s.max, Math.min(s.max, -v * s.k));
+    const j = now[s.part] || {};
+    out[s.part] = { ...j, rot: (j.rot ?? 0) + lag };
+  }
+  return out;
 }
 
 // ---------- Gait generator. Side-view bipedal cycle with proper phase relationships:
