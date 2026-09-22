@@ -3,7 +3,7 @@ Renders parent and child separately (RigQA comp), dilates by `tol` px, requires 
 import subprocess, json, sys, os, numpy as np
 from PIL import Image
 RC="/home/user/OpenMontage/remotion-composer"; W="/home/user/OpenMontage/projects/th3/work/qa"; os.makedirs(W,exist_ok=True)
-env=dict(os.environ,TMPDIR="/home/user/tmp")
+env=dict(os.environ,TMPDIR="/tmp")
 def still(props,out):
     subprocess.run(["npx","remotion","still","projects/th3/index.tsx","RigQA",out,"--props="+json.dumps(props),"--scale=0.5","--log=error"],cwd=RC,env=env,check=True,capture_output=True)
     a=np.array(Image.open(out).convert("RGB")); return (np.abs(a.astype(int)-255).sum(2)>30)
@@ -15,7 +15,7 @@ def dil(m,r):
 pairs={"uarm_f":"torso","larm_f":"uarm_f","uarm_b":"torso","larm_b":"uarm_b","thigh_f":"torso","shin_f":"thigh_f","shoe_f":"shin_f","thigh_b":"torso","shin_b":"thigh_b","shoe_b":"shin_b"}
 fails=0
 for cid,scale in (("hare",1.5),("tort",0.34)):
-  for kind in ("sprint",):
+  for kind in ("walk","sprint"):
     for phase in (0.25,0.75):
       cache={}
       def m(part):

@@ -170,9 +170,12 @@ export const Character: React.FC<{ id: "hare" | "tort"; st: CharState; ground: n
   const blink = st.blink ?? 0;
   return (
     <g opacity={st.opacity ?? 1} transform={`translate(${st.x} ${ground + st.y + (st.bob ?? 0)}) scale(${s * st.facing * (1 + sq * 0.5)} ${s * (1 - sq)}) rotate(${st.lean ?? 0}) translate(${-fx} ${-fy})`}>
+      {order.filter((n) => parts[n].cap && parts[n].capUnderParent).map((name) => (
+        <g key={"cap-" + name} transform={world(name)}><circle cx={parts[name].pivot[0]} cy={parts[name].pivot[1]} r={parts[name].cap.r} fill={parts[name].cap.fill} /></g>
+      ))}
       {order.map((name) => (
         <g key={name} transform={world(name)}>
-          {parts[name].cap && <circle cx={parts[name].pivot[0]} cy={parts[name].pivot[1]} r={parts[name].cap.r} fill={parts[name].cap.fill} />}
+          {parts[name].cap && !parts[name].capUnderParent && <circle cx={parts[name].pivot[0]} cy={parts[name].pivot[1]} r={parts[name].cap.r} fill={parts[name].cap.fill} />}
           <g dangerouslySetInnerHTML={{ __html: C.parts[name] }} />
           {name === "head" && faceMarkup && <g transform={faceMarkup.transform} dangerouslySetInnerHTML={{ __html: faceMarkup.markup }} />}
           {name === "head" && blink > 0.05 && C.eyes.map((e: number[], i: number) => (
