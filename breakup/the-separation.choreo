@@ -1,0 +1,116 @@
+// «جدایی» — a romantic breakup, told in Choreo.
+// Night. Two figures on a bench. A heart pulses between them,
+// cracks, splits, and falls away. They drift apart. It rains.
+
+scene "the-separation" size 800x450 duration 8600ms background #0f172a
+
+entities
+  moon       = circle 26 fill #f1f5f9 opacity 0.9
+  star1      = circle 1.6 fill #e2e8f0
+  star2      = circle 1.3 fill #cbd5e1
+  star3      = circle 1.8 fill #e2e8f0
+  ground     = rect 800x8 fill #1e293b
+  bench_back = rect 240x8 fill #334155 radius 4
+  leg1       = rect 8x30 fill #475569
+  leg2       = rect 8x30 fill #475569
+  bench_seat = rect 240x10 fill #475569 radius 4
+  him        = path "M28 4 C36 4 42 10 42 18 C42 24 38 29 33 32 C45 36 53 46 53 58 L53 84 L3 84 L3 58 C3 46 11 36 23 32 C18 29 14 24 14 18 C14 10 20 4 28 4 Z" size 56x84 fill #64748b
+  her        = path "M26 5 C34 5 40 11 40 19 C40 25 36 30 31 33 C43 37 51 46 51 58 L51 84 L5 84 L5 58 C5 46 13 37 25 33 C20 30 16 25 16 19 C16 11 22 5 26 5 Z M37 8 C44 5 50 10 49 17 C48 22 43 24 39 22 L37 16 Z" size 56x84 fill #94a3b8
+  heart_l    = path "M44 20 C44 9 35 2 25 2 C11 2 2 13 2 27 C2 45 20 61 44 82 L40 63 L46 45 L39 28 Z" size 46x84 fill #f43f5e
+  heart_r    = path "M2 20 C2 9 11 2 21 2 C35 2 44 13 44 27 C44 45 26 61 2 82 L6 63 L0 45 L7 28 Z" size 46x84 fill #e11d48
+  crack      = path "M45 18 L41 34 L49 50 L40 66 L45 82" size 90x84 stroke #fecdd3 stroke-width 2.5
+  drop1      = path "M2 1 L2 25" size 4x26 stroke #93c5fd stroke-width 2.5
+  drop2      = path "M2 1 L2 25" size 4x26 stroke #93c5fd stroke-width 2.5
+  drop3      = path "M2 1 L2 25" size 4x26 stroke #93c5fd stroke-width 2.5
+  drop4      = path "M2 1 L2 25" size 4x26 stroke #93c5fd stroke-width 2.5
+  title      = text "جدایی" size 46 weight 700 color #f8fafc
+  sub        = text "a love story, in one quiet goodbye" size 15 color #94a3b8
+
+layout
+  at moon 690 70
+  at star1 120 60
+  at star2 205 128
+  at star3 585 38
+  at ground 400 430
+  at bench_back 400 356
+  at leg1 316 404
+  at leg2 484 404
+  at bench_seat 400 385
+  at him 352 338
+  at her 448 338
+  at heart_l 377 235
+  at heart_r 423 235
+  at crack 400 235
+  at drop1 322 205
+  at drop2 374 245
+  at drop3 428 185
+  at drop4 478 235
+  at title 400 90
+  at sub 400 132
+
+motion
+  seq
+    par
+      fadeIn moon 700ms
+      fadeIn star1 700ms
+      fadeIn star2 700ms
+      fadeIn star3 700ms
+      fadeIn ground 700ms
+      fadeIn bench_back 700ms
+      fadeIn leg1 700ms
+      fadeIn leg2 700ms
+      fadeIn bench_seat 700ms
+    par
+      pop him 550ms spring
+      pop her 550ms spring
+    par
+      pulse heart_l 500ms easeInOut
+      pulse heart_r 500ms easeInOut
+    par
+      pulse heart_l 500ms easeInOut
+      pulse heart_r 500ms easeInOut
+    drawOn crack 500ms easeOut
+    par
+      move heart_l by -40 -10 600ms easeIn
+      spin heart_l -24 600ms easeIn
+      move heart_r by 40 -10 600ms easeIn
+      spin heart_r 24 600ms easeIn
+    par
+      fadeOut heart_l 400ms
+      fadeOut heart_r 400ms
+      fadeOut crack 400ms
+    par
+      move him by -110 0 1480ms easeInOut
+      move her by 110 0 1480ms easeInOut
+      stagger 130ms
+        slideIn drop1 from top 150 1000ms linear
+        slideIn drop2 from top 150 1000ms linear
+        slideIn drop3 from top 150 1000ms linear
+        slideIn drop4 from top 150 1000ms linear
+    fadeIn title 900ms easeOut
+    slideIn sub from bottom 12 700ms easeOut
+    wait 400ms
+    stagger 100ms
+      fadeOut drop1 350ms
+      fadeOut drop2 350ms
+      fadeOut drop3 350ms
+      fadeOut drop4 350ms
+
+checks
+  at 100 : hidden(him) and hidden(her) and hidden(title) and hidden(sub) and hidden(drop1) and hidden(drop4)
+  during 50..650 : fadesIn(moon) and fadesIn(ground) and fadesIn(bench_seat)
+  during 750..1200 : fadesIn(him) and fadesIn(her)
+  at 1300 : visible(heart_l) and visible(heart_r)
+  during 1300..1500 : grows(heart_l) and grows(heart_r)
+  during 2300..2700 : visible(crack)
+  during 2800..3300 : movesLeft(heart_l) and movesRight(heart_r)
+  at 3400 : notOverlapping(heart_l, heart_r)
+  during 3800..5100 : movesLeft(him) and movesRight(her)
+  during 3800..4700 : fadesIn(drop1) and movesDown(drop1)
+  during 4200..5080 : fadesIn(drop4) and movesDown(drop4)
+  at 5300 : leftOf(him, bench_seat)
+  at end : leftOf(him, her) and rightOf(her, bench_seat) and above(title, bench_seat)
+  always : onScreen(him) and onScreen(her) and onScreen(heart_l) and onScreen(heart_r)
+  during 6200..6700 : fadesIn(sub)
+  at end : fadedIn(him) and fadedIn(her) and fadedOut(heart_l) and fadedOut(heart_r) and fadedOut(crack) and fadedIn(title) and fadedIn(sub) and settled(all)
+  trace : appearsBefore(bench_seat, him) and appearsBefore(her, drop1) and appearsBefore(drop1, title)
