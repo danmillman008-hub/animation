@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "fps": 30,
+  "scenes": [
+    {
+      "scene_id": "sc1",
+      "start_seconds": 0,
+      "end_seconds": 3,
+      "camera": {
+        "framing": "medium"
+      },
+      "background": "",
+      "effects": [],
+      "actions": [
+        {
+          "at_seconds": 0.0,
+          "duration_seconds": 0.5,
+          "character_id": "hare",
+          "action": "anticipate",
+          "pose": "idle",
+          "easing": "power2.out"
+        },
+        {
+          "at_seconds": 0.75,
+          "duration_seconds": 1.0499999999999998,
+          "character_id": "hare",
+          "action": "perform",
+          "pose": "look_right",
+          "easing": "back.out",
+          "notes": ""
+        },
+        {
+          "at_seconds": 2.0999999999999996,
+          "duration_seconds": 0.75,
+          "character_id": "hare",
+          "action": "settle",
+          "pose": "idle",
+          "easing": "power2.inOut"
+        },
+        {
+          "at_seconds": 0.24,
+          "duration_seconds": 0.5,
+          "character_id": "tort",
+          "action": "react",
+          "pose": "idle",
+          "easing": "power2.out"
+        },
+        {
+          "at_seconds": 0.99,
+          "duration_seconds": 1.0499999999999998,
+          "character_id": "tort",
+          "action": "follow",
+          "pose": "surprised",
+          "easing": "back.out",
+          "notes": ""
+        },
+        {
+          "at_seconds": 2.34,
+          "duration_seconds": 0.75,
+          "character_id": "tort",
+          "action": "settle",
+          "pose": "idle",
+          "easing": "power2.inOut"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "source": "action_timeline_compiler"
+  }
+}

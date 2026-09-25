@@ -1,0 +1,248 @@
+{
+ "character_id": "hare",
+ "rig_type": "svg_rig",
+ "coordinate_space": "artwork (source SVG user units)",
+ "parts": [
+  {
+   "id": "hips",
+   "kind": "torso",
+   "layer": 5
+  },
+  {
+   "id": "torso",
+   "kind": "torso",
+   "layer": 6,
+   "parent": "hips"
+  },
+  {
+   "id": "head",
+   "kind": "head",
+   "layer": 9,
+   "parent": "torso"
+  },
+  {
+   "id": "uarm_b",
+   "kind": "limb",
+   "layer": 1,
+   "parent": "torso"
+  },
+  {
+   "id": "larm_b",
+   "kind": "limb",
+   "layer": 1,
+   "parent": "uarm_b"
+  },
+  {
+   "id": "uarm_f",
+   "kind": "limb",
+   "layer": 10,
+   "parent": "torso"
+  },
+  {
+   "id": "larm_f",
+   "kind": "limb",
+   "layer": 10,
+   "parent": "uarm_f"
+  },
+  {
+   "id": "thigh_f",
+   "kind": "limb",
+   "layer": 7,
+   "parent": "hips"
+  },
+  {
+   "id": "shin_f",
+   "kind": "limb",
+   "layer": 7,
+   "parent": "thigh_f"
+  },
+  {
+   "id": "shoe_f",
+   "kind": "limb",
+   "layer": 7,
+   "parent": "shin_f"
+  },
+  {
+   "id": "thigh_b",
+   "kind": "limb",
+   "layer": 2,
+   "parent": "hips"
+  },
+  {
+   "id": "shin_b",
+   "kind": "limb",
+   "layer": 2,
+   "parent": "thigh_b"
+  },
+  {
+   "id": "shoe_b",
+   "kind": "limb",
+   "layer": 2,
+   "parent": "shin_b"
+  }
+ ],
+ "joints": {
+  "hips": {
+   "pivot": [
+    188,
+    330
+   ],
+   "rotation": [
+    -30,
+    30
+   ]
+  },
+  "torso": {
+   "pivot": [
+    188,
+    322
+   ],
+   "rotation": [
+    -45,
+    45
+   ]
+  },
+  "head": {
+   "pivot": [
+    190,
+    236
+   ],
+   "rotation": [
+    -35,
+    35
+   ]
+  },
+  "uarm_b": {
+   "pivot": [
+    207,
+    262
+   ],
+   "rotation": [
+    -185,
+    80
+   ],
+   "cap": {
+    "r": 10.3,
+    "fill": "#ecad0f"
+   }
+  },
+  "larm_b": {
+   "pivot": [
+    208.9,
+    307.9
+   ],
+   "rotation": [
+    -150,
+    8
+   ],
+   "cap": {
+    "r": 7.9,
+    "fill": "#c18766"
+   }
+  },
+  "uarm_f": {
+   "pivot": [
+    164,
+    258
+   ],
+   "rotation": [
+    -185,
+    80
+   ],
+   "cap": {
+    "r": 9.9,
+    "fill": "#ecad0f"
+   }
+  },
+  "larm_f": {
+   "pivot": [
+    159.9,
+    308.0
+   ],
+   "rotation": [
+    -150,
+    8
+   ],
+   "cap": {
+    "r": 7.6,
+    "fill": "#c18766"
+   }
+  },
+  "thigh_f": {
+   "pivot": [
+    200,
+    323
+   ],
+   "rotation": [
+    -120,
+    70
+   ],
+   "cap": {
+    "r": 12.0,
+    "fill": "#336167"
+   }
+  },
+  "shin_f": {
+   "pivot": [
+    199.0,
+    399.9
+   ],
+   "rotation": [
+    -8,
+    145
+   ],
+   "cap": {
+    "r": 11.9,
+    "fill": "#2f5a5f"
+   }
+  },
+  "shoe_f": {
+   "pivot": [
+    206.7,
+    469.4
+   ],
+   "rotation": [
+    -40,
+    45
+   ]
+  },
+  "thigh_b": {
+   "pivot": [
+    184,
+    323
+   ],
+   "rotation": [
+    -120,
+    70
+   ],
+   "cap": {
+    "r": 20.8,
+    "fill": "#336167"
+   }
+  },
+  "shin_b": {
+   "pivot": [
+    172.2,
+    400.1
+   ],
+   "rotation": [
+    -8,
+    145
+   ],
+   "cap": {
+    "r": 12.8,
+    "fill": "#2f5a5f"
+   }
+  },
+  "shoe_b": {
+   "pivot": [
+    159.8,
+    468.5
+   ],
+   "rotation": [
+    -40,
+    45
+   ]
+  }
+ }
+}

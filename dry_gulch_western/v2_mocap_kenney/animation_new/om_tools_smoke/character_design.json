@@ -1,0 +1,57 @@
+{
+  "version": "1.0",
+  "style": {
+    "visual_style": "flat vector"
+  },
+  "characters": [
+    {
+      "id": "hare",
+      "display_name": "Hare",
+      "role": "boastful runner",
+      "body_type": "simple cartoon body",
+      "style": "flat vector",
+      "silhouette_notes": "",
+      "required_emotions": [
+        "smug",
+        "shocked"
+      ],
+      "required_actions": [
+        "run",
+        "laugh",
+        "sleep"
+      ],
+      "required_views": [
+        "front",
+        "side"
+      ],
+      "props": [],
+      "constraints": []
+    },
+    {
+      "id": "tort",
+      "display_name": "Tort",
+      "role": "steady walker",
+      "body_type": "simple cartoon body",
+      "style": "flat vector",
+      "silhouette_notes": "",
+      "required_emotions": [
+        "calm",
+        "happy"
+      ],
+      "required_actions": [
+        "walk",
+        "wave"
+      ],
+      "required_views": [
+        "front",
+        "side"
+      ],
+      "props": [],
+      "constraints": []
+    }
+  ],
+  "metadata": {
+    "source": "character_spec_generator",
+    "brief": "Aesop's tortoise and hare"
+  }
+}

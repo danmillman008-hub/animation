@@ -1,0 +1,740 @@
+{
+ "version": 1,
+ "parts": [
+  {
+   "id": "hare/hips",
+   "character": "hare",
+   "part": "hips",
+   "kind": "torso",
+   "parent": null,
+   "layer": 5,
+   "artwork_hash": "e121f28dad",
+   "artwork_bytes": 529,
+   "pivot": [
+    188,
+    330
+   ],
+   "rotation": [
+    -30,
+    30
+   ],
+   "cap": null,
+   "tags": [
+    "hips"
+   ]
+  },
+  {
+   "id": "hare/torso",
+   "character": "hare",
+   "part": "torso",
+   "kind": "torso",
+   "parent": "hips",
+   "layer": 6,
+   "artwork_hash": "c18a92dbbe",
+   "artwork_bytes": 952,
+   "pivot": [
+    188,
+    322
+   ],
+   "rotation": [
+    -45,
+    45
+   ],
+   "cap": null,
+   "tags": [
+    "torso"
+   ]
+  },
+  {
+   "id": "hare/head",
+   "character": "hare",
+   "part": "head",
+   "kind": "head",
+   "parent": "torso",
+   "layer": 9,
+   "artwork_hash": "11131fd58b",
+   "artwork_bytes": 42487,
+   "pivot": [
+    190,
+    236
+   ],
+   "rotation": [
+    -35,
+    35
+   ],
+   "cap": null,
+   "tags": [
+    "head"
+   ]
+  },
+  {
+   "id": "hare/uarm_b",
+   "character": "hare",
+   "part": "uarm_b",
+   "kind": "limb",
+   "parent": "torso",
+   "layer": 1,
+   "artwork_hash": "f2990e9a3b",
+   "artwork_bytes": 6581,
+   "pivot": [
+    209,
+    250
+   ],
+   "rotation": [
+    -185,
+    80
+   ],
+   "cap": {
+    "r": 9,
+    "fill": "#ecad0f"
+   },
+   "tags": [
+    "arm",
+    "b",
+    "back",
+    "uarm"
+   ]
+  },
+  {
+   "id": "hare/larm_b",
+   "character": "hare",
+   "part": "larm_b",
+   "kind": "limb",
+   "parent": "uarm_b",
+   "layer": 1,
+   "artwork_hash": "6c254bc048",
+   "artwork_bytes": 6531,
+   "pivot": [
+    208.9,
+    307.9
+   ],
+   "rotation": [
+    -150,
+    8
+   ],
+   "cap": {
+    "r": 7.2,
+    "fill": "#c18766"
+   },
+   "tags": [
+    "arm",
+    "b",
+    "back",
+    "larm"
+   ]
+  },
+  {
+   "id": "hare/uarm_f",
+   "character": "hare",
+   "part": "uarm_f",
+   "kind": "limb",
+   "parent": "torso",
+   "layer": 10,
+   "artwork_hash": "18956591f4",
+   "artwork_bytes": 4922,
+   "pivot": [
+    160,
+    252
+   ],
+   "rotation": [
+    -185,
+    80
+   ],
+   "cap": {
+    "r": 9,
+    "fill": "#ecad0f"
+   },
+   "tags": [
+    "arm",
+    "f",
+    "front",
+    "uarm"
+   ]
+  },
+  {
+   "id": "hare/larm_f",
+   "character": "hare",
+   "part": "larm_f",
+   "kind": "limb",
+   "parent": "uarm_f",
+   "layer": 10,
+   "artwork_hash": "263ec3011b",
+   "artwork_bytes": 4872,
+   "pivot": [
+    159.9,
+    308.0
+   ],
+   "rotation": [
+    -150,
+    8
+   ],
+   "cap": {
+    "r": 7.2,
+    "fill": "#c18766"
+   },
+   "tags": [
+    "arm",
+    "f",
+    "front",
+    "larm"
+   ]
+  },
+  {
+   "id": "hare/thigh_f",
+   "character": "hare",
+   "part": "thigh_f",
+   "kind": "limb",
+   "parent": "hips",
+   "layer": 7,
+   "artwork_hash": "5a91c353cd",
+   "artwork_bytes": 2689,
+   "pivot": [
+    200,
+    328
+   ],
+   "rotation": [
+    -120,
+    70
+   ],
+   "cap": null,
+   "tags": [
+    "f",
+    "front",
+    "leg",
+    "thigh"
+   ]
+  },
+  {
+   "id": "hare/shin_f",
+   "character": "hare",
+   "part": "shin_f",
+   "kind": "limb",
+   "parent": "thigh_f",
+   "layer": 7,
+   "artwork_hash": "ba4f5a1da0",
+   "artwork_bytes": 2751,
+   "pivot": [
+    199.0,
+    399.9
+   ],
+   "rotation": [
+    -8,
+    145
+   ],
+   "cap": {
+    "r": 12.5,
+    "fill": "#2f5a5f"
+   },
+   "tags": [
+    "f",
+    "front",
+    "leg",
+    "shin"
+   ]
+  },
+  {
+   "id": "hare/shoe_f",
+   "character": "hare",
+   "part": "shoe_f",
+   "kind": "limb",
+   "parent": "shin_f",
+   "layer": 7,
+   "artwork_hash": "1885f85822",
+   "artwork_bytes": 11848,
+   "pivot": [
+    206.7,
+    469.4
+   ],
+   "rotation": [
+    -40,
+    45
+   ],
+   "cap": null,
+   "tags": [
+    "f",
+    "front",
+    "leg",
+    "shoe"
+   ]
+  },
+  {
+   "id": "hare/thigh_b",
+   "character": "hare",
+   "part": "thigh_b",
+   "kind": "limb",
+   "parent": "hips",
+   "layer": 2,
+   "artwork_hash": "2cc04ebe9b",
+   "artwork_bytes": 3075,
+   "pivot": [
+    176,
+    328
+   ],
+   "rotation": [
+    -120,
+    70
+   ],
+   "cap": null,
+   "tags": [
+    "b",
+    "back",
+    "leg",
+    "thigh"
+   ]
+  },
+  {
+   "id": "hare/shin_b",
+   "character": "hare",
+   "part": "shin_b",
+   "kind": "limb",
+   "parent": "thigh_b",
+   "layer": 2,
+   "artwork_hash": "e45d378f91",
+   "artwork_bytes": 3135,
+   "pivot": [
+    172.2,
+    400.1
+   ],
+   "rotation": [
+    -8,
+    145
+   ],
+   "cap": {
+    "r": 12.5,
+    "fill": "#2f5a5f"
+   },
+   "tags": [
+    "b",
+    "back",
+    "leg",
+    "shin"
+   ]
+  },
+  {
+   "id": "hare/shoe_b",
+   "character": "hare",
+   "part": "shoe_b",
+   "kind": "limb",
+   "parent": "shin_b",
+   "layer": 2,
+   "artwork_hash": "acec1caf0b",
+   "artwork_bytes": 10465,
+   "pivot": [
+    159.8,
+    468.5
+   ],
+   "rotation": [
+    -40,
+    45
+   ],
+   "cap": null,
+   "tags": [
+    "b",
+    "back",
+    "leg",
+    "shoe"
+   ]
+  },
+  {
+   "id": "tort/hips",
+   "character": "tort",
+   "part": "hips",
+   "kind": "torso",
+   "parent": null,
+   "layer": 5,
+   "artwork_hash": "da39a3ee5e",
+   "artwork_bytes": 0,
+   "pivot": [
+    1170,
+    1900
+   ],
+   "rotation": [
+    -30,
+    30
+   ],
+   "cap": null,
+   "tags": [
+    "hips"
+   ]
+  },
+  {
+   "id": "tort/torso",
+   "character": "tort",
+   "part": "torso",
+   "kind": "torso",
+   "parent": "hips",
+   "layer": 6,
+   "artwork_hash": "bb9b24e643",
+   "artwork_bytes": 3326,
+   "pivot": [
+    1170,
+    1890
+   ],
+   "rotation": [
+    -45,
+    45
+   ],
+   "cap": null,
+   "tags": [
+    "torso"
+   ]
+  },
+  {
+   "id": "tort/neck",
+   "character": "tort",
+   "part": "neck",
+   "kind": "head",
+   "parent": "torso",
+   "layer": 7,
+   "artwork_hash": "08dba83e30",
+   "artwork_bytes": 481,
+   "pivot": [
+    1160,
+    1520
+   ],
+   "rotation": [
+    -25,
+    25
+   ],
+   "cap": null,
+   "tags": [
+    "neck"
+   ]
+  },
+  {
+   "id": "tort/hair_back",
+   "character": "tort",
+   "part": "hair_back",
+   "kind": "head",
+   "parent": "neck",
+   "layer": 0,
+   "artwork_hash": "7bc2224033",
+   "artwork_bytes": 2235,
+   "pivot": [
+    1160,
+    1480
+   ],
+   "rotation": [
+    -10,
+    10
+   ],
+   "cap": null,
+   "tags": [
+    "back",
+    "hair"
+   ]
+  },
+  {
+   "id": "tort/head",
+   "character": "tort",
+   "part": "head",
+   "kind": "head",
+   "parent": "neck",
+   "layer": 9,
+   "artwork_hash": "2b7f88fa50",
+   "artwork_bytes": 7324,
+   "pivot": [
+    1160,
+    1470
+   ],
+   "rotation": [
+    -35,
+    35
+   ],
+   "cap": null,
+   "tags": [
+    "head"
+   ]
+  },
+  {
+   "id": "tort/hair",
+   "character": "tort",
+   "part": "hair",
+   "kind": "head",
+   "parent": "head",
+   "layer": 9,
+   "artwork_hash": "d37b426517",
+   "artwork_bytes": 779,
+   "pivot": [
+    1160,
+    1470
+   ],
+   "rotation": [
+    -10,
+    10
+   ],
+   "cap": null,
+   "tags": [
+    "hair"
+   ]
+  },
+  {
+   "id": "tort/uarm_b",
+   "character": "tort",
+   "part": "uarm_b",
+   "kind": "limb",
+   "parent": "torso",
+   "layer": 1,
+   "artwork_hash": "dadf2e446b",
+   "artwork_bytes": 1031,
+   "pivot": [
+    1300,
+    1520
+   ],
+   "rotation": [
+    -185,
+    80
+   ],
+   "cap": {
+    "r": 14,
+    "fill": "#635eaf"
+   },
+   "tags": [
+    "arm",
+    "b",
+    "back",
+    "uarm"
+   ]
+  },
+  {
+   "id": "tort/larm_b",
+   "character": "tort",
+   "part": "larm_b",
+   "kind": "limb",
+   "parent": "uarm_b",
+   "layer": 1,
+   "artwork_hash": "e448502d9d",
+   "artwork_bytes": 3403,
+   "pivot": [
+    1326.7,
+    1771.7
+   ],
+   "rotation": [
+    -150,
+    8
+   ],
+   "cap": {
+    "r": 30,
+    "fill": "#fbc1c4"
+   },
+   "tags": [
+    "arm",
+    "b",
+    "back",
+    "larm"
+   ]
+  },
+  {
+   "id": "tort/uarm_f",
+   "character": "tort",
+   "part": "uarm_f",
+   "kind": "limb",
+   "parent": "torso",
+   "layer": 10,
+   "artwork_hash": "a968e3f9c1",
+   "artwork_bytes": 1018,
+   "pivot": [
+    1010,
+    1520
+   ],
+   "rotation": [
+    -185,
+    80
+   ],
+   "cap": {
+    "r": 14,
+    "fill": "#635eaf"
+   },
+   "tags": [
+    "arm",
+    "f",
+    "front",
+    "uarm"
+   ]
+  },
+  {
+   "id": "tort/larm_f",
+   "character": "tort",
+   "part": "larm_f",
+   "kind": "limb",
+   "parent": "uarm_f",
+   "layer": 10,
+   "artwork_hash": "7ad2fe4c4b",
+   "artwork_bytes": 3304,
+   "pivot": [
+    977.6,
+    1766.5
+   ],
+   "rotation": [
+    -150,
+    8
+   ],
+   "cap": {
+    "r": 30,
+    "fill": "#fbc1c4"
+   },
+   "tags": [
+    "arm",
+    "f",
+    "front",
+    "larm"
+   ]
+  },
+  {
+   "id": "tort/thigh_f",
+   "character": "tort",
+   "part": "thigh_f",
+   "kind": "limb",
+   "parent": "hips",
+   "layer": 7,
+   "artwork_hash": "dd0bbf2cc3",
+   "artwork_bytes": 604,
+   "pivot": [
+    1185,
+    1900
+   ],
+   "rotation": [
+    -120,
+    70
+   ],
+   "cap": null,
+   "tags": [
+    "f",
+    "front",
+    "leg",
+    "thigh"
+   ]
+  },
+  {
+   "id": "tort/shin_f",
+   "character": "tort",
+   "part": "shin_f",
+   "kind": "limb",
+   "parent": "thigh_f",
+   "layer": 7,
+   "artwork_hash": "2ec5e4fef8",
+   "artwork_bytes": 586,
+   "pivot": [
+    1290,
+    2240
+   ],
+   "rotation": [
+    -8,
+    145
+   ],
+   "cap": {
+    "r": 22,
+    "fill": "#2e2c2d"
+   },
+   "tags": [
+    "f",
+    "front",
+    "leg",
+    "shin"
+   ]
+  },
+  {
+   "id": "tort/shoe_f",
+   "character": "tort",
+   "part": "shoe_f",
+   "kind": "limb",
+   "parent": "shin_f",
+   "layer": 7,
+   "artwork_hash": "62357d1d06",
+   "artwork_bytes": 1767,
+   "pivot": [
+    1420,
+    2620
+   ],
+   "rotation": [
+    -40,
+    45
+   ],
+   "cap": null,
+   "tags": [
+    "f",
+    "front",
+    "leg",
+    "shoe"
+   ]
+  },
+  {
+   "id": "tort/thigh_b",
+   "character": "tort",
+   "part": "thigh_b",
+   "kind": "limb",
+   "parent": "hips",
+   "layer": 2,
+   "artwork_hash": "6bb4edfcae",
+   "artwork_bytes": 434,
+   "pivot": [
+    1150,
+    1900
+   ],
+   "rotation": [
+    -120,
+    70
+   ],
+   "cap": null,
+   "tags": [
+    "b",
+    "back",
+    "leg",
+    "thigh"
+   ]
+  },
+  {
+   "id": "tort/shin_b",
+   "character": "tort",
+   "part": "shin_b",
+   "kind": "limb",
+   "parent": "thigh_b",
+   "layer": 2,
+   "artwork_hash": "dca9f12422",
+   "artwork_bytes": 584,
+   "pivot": [
+    1180,
+    2255
+   ],
+   "rotation": [
+    -8,
+    145
+   ],
+   "cap": {
+    "r": 20,
+    "fill": "#1a1918"
+   },
+   "tags": [
+    "b",
+    "back",
+    "leg",
+    "shin"
+   ]
+  },
+  {
+   "id": "tort/shoe_b",
+   "character": "tort",
+   "part": "shoe_b",
+   "kind": "limb",
+   "parent": "shin_b",
+   "layer": 2,
+   "artwork_hash": "2623b42e62",
+   "artwork_bytes": 1814,
+   "pivot": [
+    1090,
+    2640
+   ],
+   "rotation": [
+    -40,
+    45
+   ],
+   "cap": null,
+   "tags": [
+    "b",
+    "back",
+    "leg",
+    "shoe"
+   ]
+  }
+ ]
+}

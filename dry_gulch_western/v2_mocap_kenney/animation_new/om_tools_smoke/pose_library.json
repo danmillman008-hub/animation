@@ -1,0 +1,208 @@
+{
+  "version": "1.0",
+  "characters": [
+    {
+      "character_id": "hare",
+      "poses": {
+        "idle": {
+          "description": "Neutral readable hold",
+          "parts": {},
+          "hold_frames": 24
+        },
+        "blink": {
+          "description": "Quick eye close/open",
+          "parts": {
+            "eye_left": {
+              "scaleY": 0.08
+            },
+            "eye_right": {
+              "scaleY": 0.08
+            }
+          },
+          "hold_frames": 3,
+          "transition": "power1.inOut"
+        },
+        "look_left": {
+          "description": "Gaze shifts left",
+          "parts": {
+            "pupil_left": {
+              "x": -6
+            },
+            "pupil_right": {
+              "x": -6
+            }
+          },
+          "hold_frames": 18
+        },
+        "look_right": {
+          "description": "Gaze shifts right",
+          "parts": {
+            "pupil_left": {
+              "x": 6
+            },
+            "pupil_right": {
+              "x": 6
+            }
+          },
+          "hold_frames": 18
+        },
+        "surprised": {
+          "description": "Head lifts, eyes widen, mouth opens",
+          "parts": {
+            "head": {
+              "y": -4,
+              "rotation": -4
+            },
+            "mouth": {
+              "shape": "small_o"
+            }
+          },
+          "expression": "surprised",
+          "hold_frames": 24,
+          "transition": "back.out"
+        },
+        "run": {
+          "description": "First-pass pose for run",
+          "parts": {},
+          "hold_frames": 18,
+          "transition": "power2.inOut"
+        },
+        "laugh": {
+          "description": "First-pass pose for laugh",
+          "parts": {},
+          "hold_frames": 18,
+          "transition": "power2.inOut"
+        },
+        "sleep": {
+          "description": "First-pass pose for sleep",
+          "parts": {},
+          "hold_frames": 18,
+          "transition": "power2.inOut"
+        }
+      },
+      "mouth_shapes": {
+        "closed": {
+          "description": "Neutral closed mouth"
+        },
+        "small_o": {
+          "description": "Small open mouth for surprise or vowel"
+        },
+        "wide": {
+          "description": "Wide open mouth"
+        },
+        "smile": {
+          "description": "Smile shape"
+        }
+      },
+      "action_cycles": {
+        "walk": [
+          "walk_contact",
+          "walk_passing"
+        ],
+        "breathe": [
+          "idle"
+        ]
+      }
+    },
+    {
+      "character_id": "tort",
+      "poses": {
+        "idle": {
+          "description": "Neutral readable hold",
+          "parts": {},
+          "hold_frames": 24
+        },
+        "blink": {
+          "description": "Quick eye close/open",
+          "parts": {
+            "eye_left": {
+              "scaleY": 0.08
+            },
+            "eye_right": {
+              "scaleY": 0.08
+            }
+          },
+          "hold_frames": 3,
+          "transition": "power1.inOut"
+        },
+        "look_left": {
+          "description": "Gaze shifts left",
+          "parts": {
+            "pupil_left": {
+              "x": -6
+            },
+            "pupil_right": {
+              "x": -6
+            }
+          },
+          "hold_frames": 18
+        },
+        "look_right": {
+          "description": "Gaze shifts right",
+          "parts": {
+            "pupil_left": {
+              "x": 6
+            },
+            "pupil_right": {
+              "x": 6
+            }
+          },
+          "hold_frames": 18
+        },
+        "surprised": {
+          "description": "Head lifts, eyes widen, mouth opens",
+          "parts": {
+            "head": {
+              "y": -4,
+              "rotation": -4
+            },
+            "mouth": {
+              "shape": "small_o"
+            }
+          },
+          "expression": "surprised",
+          "hold_frames": 24,
+          "transition": "back.out"
+        },
+        "walk": {
+          "description": "First-pass pose for walk",
+          "parts": {},
+          "hold_frames": 18,
+          "transition": "power2.inOut"
+        },
+        "wave": {
+          "description": "First-pass pose for wave",
+          "parts": {},
+          "hold_frames": 18,
+          "transition": "power2.inOut"
+        }
+      },
+      "mouth_shapes": {
+        "closed": {
+          "description": "Neutral closed mouth"
+        },
+        "small_o": {
+          "description": "Small open mouth for surprise or vowel"
+        },
+        "wide": {
+          "description": "Wide open mouth"
+        },
+        "smile": {
+          "description": "Smile shape"
+        }
+      },
+      "action_cycles": {
+        "walk": [
+          "walk_contact",
+          "walk_passing"
+        ],
+        "breathe": [
+          "idle"
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "source": "pose_library_builder"
+  }
+}

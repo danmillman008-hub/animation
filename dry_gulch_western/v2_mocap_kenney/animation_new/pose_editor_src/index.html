@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Pose & Rig Editor</title>
+<style>
+  body{margin:0;font:13px system-ui,sans-serif;background:#1e1f26;color:#ddd;display:grid;grid-template-columns:300px 1fr 300px;grid-template-rows:44px 1fr 150px;height:100vh}
+  header{grid-column:1/4;display:flex;gap:10px;align-items:center;padding:0 12px;background:#2a2b33;border-bottom:1px solid #000}
+  select,button,input{background:#3a3b45;color:#eee;border:1px solid #555;border-radius:4px;padding:4px 8px;font:inherit}
+  button:hover{background:#4a4b58}button.primary{background:#2d6cdf}button.warn{background:#a33}
+  #left,#right{overflow:auto;padding:10px;background:#24252d}
+  #stage{position:relative;overflow:hidden;background:#3b3d48}
+  svg{width:100%;height:100%;display:block}
+  #timeline{grid-column:1/4;background:#24252d;border-top:1px solid #000;padding:8px;display:flex;flex-direction:column;gap:6px}
+  .row{display:flex;align-items:center;gap:6px;margin:3px 0}
+  .row label{width:64px;font-size:11px;font-family:monospace;color:#aaa;overflow:hidden;text-overflow:ellipsis}
+  .row input[type=range]{flex:1}
+  .row input[type=number]{width:56px}
+  .row.sel label{color:#ffd66b}
+  .key{display:inline-flex;flex-direction:column;align-items:center;padding:4px 6px;border:1px solid #555;border-radius:4px;background:#333;cursor:pointer;min-width:60px}
+  .key.sel{border-color:#ffd66b;background:#4a4320}
+  .key small{color:#999}
+  h3{margin:8px 0 4px;font-size:12px;color:#9ab;text-transform:uppercase;letter-spacing:.06em}
+  .hint{color:#888;font-size:11px;line-height:1.4}
+  #keys{display:flex;gap:6px;flex-wrap:wrap;overflow:auto}
+  #log{position:absolute;left:8px;bottom:8px;color:#9f9;font-family:monospace;font-size:11px;pointer-events:none}
+</style></head><body>
+<header>
+  <b>Pose &amp; Rig Editor</b>
+  <select id="charSel"></select>
+  <label>Face <select id="faceSel"></select></label>
+  <label><input type="checkbox" id="pivotMode"> Pivot mode (drag = move pivot)</label>
+  <label><input type="checkbox" id="ikMode" checked> IK on hands/feet</label>
+  <label><input type="checkbox" id="onion"> Onion skin</label>
+  <span style="flex:1"></span>
+  <button id="loadBtn">Load JSON</button><input type="file" id="fileIn" accept=".json" hidden>
+  <button id="saveBtn" class="primary">Save poses.json</button>
+  <button id="saveRigBtn">Save rig_patch.json</button>
+</header>
+<div id="left">
+  <h3>Joints (drag on stage or slide)</h3>
+  <div id="sliders"></div>
+  <h3>Root</h3>
+  <div class="row"><label>hips y</label><input id="hipsY" type="range" min="-100" max="300" value="0"><input id="hipsYn" type="number" value="0"></div>
+  <div class="row"><label>lean</label><input id="lean" type="range" min="-40" max="40" value="0"><input id="leann" type="number" value="0"></div>
+</div>
+<div id="stage"><svg id="svg" viewBox="0 0 1600 1000"></svg><div id="log"></div></div>
+<div id="right">
+  <h3>How to help</h3>
+  <div class="hint">
+    <b>Pose mode:</b> drag a joint dot to rotate that part (children follow). With IK on, dragging a hand/foot solves the elbow/knee. Shift+drag = rotate only that part.<br><br>
+    <b>Pivot mode:</b> drag a dot to move the pivot itself (fix a bad joint). Saved into <code>rig_patch.json</code>.<br><br>
+    <b>Keys:</b> name a pose, set its time (s), <i>Add key</i>. Click a key to edit it. <i>Save poses.json</i> writes everything; drop the file in the workspace and I wire it into Main.tsx.<br><br>
+    Keys: <kbd>R</kbd> reset pose · <kbd>M</kbd> mirror f/b · <kbd>←/→</kbd> prev/next key · <kbd>Del</kbd> delete key.
+  </div>
+  <h3>Selected part</h3>
+  <div id="selInfo" class="hint">—</div>
+  <h3>Pose JSON</h3>
+  <textarea id="poseJson" style="width:100%;height:220px;background:#111;color:#9f9;font:11px monospace;border:1px solid #444"></textarea>
+  <button id="applyJson">Apply JSON</button>
+</div>
+<div id="timeline">
+  <div class="row"><label>Pose name</label><input id="keyName" value="pose1" style="width:140px"><label>time (s)</label><input id="keyTime" type="number" step="0.1" value="0" style="width:70px">
+    <label>ease</label><select id="keyEase"><option>inOut</option><option>backOut</option><option>out</option><option>in</option><option>linear</option></select>
+    <button id="addKey" class="primary">Add / update key</button><button id="delKey" class="warn">Delete key</button>
+    <label>scrub</label><input id="scrub" type="range" min="0" max="10" step="0.02" value="0" style="width:260px"><span id="scrubT">0.00</span><button id="play">▶ preview</button></div>
+  <div id="keys"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+let RIGS={}, cur=null, C=null, pose={}, hipsY=0, lean=0, keys=[], selKey=-1, sel=null, rigPatch={}, face="";
+const CLAMP=(v,lim)=>lim?Math.max(lim[0],Math.min(lim[1],v)):v;
+const d2r=Math.PI/180;
+// --- transform helpers (mirror Rig.tsx) ---
+function localM(name){const p=C.rig.parts[name];const j=pose[name]||{};const [px,py]=piv(name);const rot=CLAMP((j.rot||0),p.rotation);
+  const m=new DOMMatrix().translate(px+(j.x||0),py+(j.y||0)).rotate(rot).translate(-px,-py);return m;}
+function worldM(name){let m=new DOMMatrix();const chain=[];let n=name;while(n){chain.unshift(n);n=C.rig.parts[n].parent;}for(const k of chain)m=m.multiply(localM(k));return m;}
+function piv(name){const pt=(rigPatch[cur]||{})[name];return pt||C.rig.parts[name].pivot;}
+function rootM(){const [fx,fy]=C.rig.foot;const s=C.scale;return new DOMMatrix().translate(800,900+hipsY*s).scale(s,s).rotate(lean).translate(-fx,-fy);}
+// --- render ---
+function render(){
+  const svg=$('#svg');const parts=C.rig.parts;const order=Object.keys(parts).sort((a,b)=>parts[a].z-parts[b].z);
+  let html=`<defs>${C.defs}</defs><line x1="0" x2="1600" y1="900" y2="900" stroke="#666"/>`;
+  const R=rootM();
+  const draw=(alpha,ps)=>{const save=pose;pose=ps;let h=`<g opacity="${alpha}" transform="${R.toString()}">`;
+    for(const n of order){const w=worldM(n);const cap=parts[n].cap;
+      h+=`<g transform="${w.toString()}">${cap?`<circle cx="${piv(n)[0]}" cy="${piv(n)[1]}" r="${cap.r}" fill="${cap.fill}"/>`:''}${C.parts[n]||''}</g>`;}
+    h+='</g>';pose=save;return h;};
+  if($('#onion').checked&&selKey>0)html+=draw(0.25,keys[selKey-1].pose);
+  html+=draw(1,pose);
+  // joint handles
+  html+=`<g transform="${R.toString()}">`;
+  for(const n of order){const [px,py]=piv(n);const w=worldM(n);const p=w.transformPoint(new DOMPoint(px,py));
+    const r=(sel===n?9:6)/C.scale;html+=`<circle data-j="${n}" cx="${p.x}" cy="${p.y}" r="${r}" fill="${sel===n?'#ffd66b':'#f33'}" stroke="#fff" stroke-width="${1.5/C.scale}" style="cursor:grab"/>`;}
+  html+='</g>';svg.innerHTML=html;
+  $('#poseJson').value=JSON.stringify({...pose,...(hipsY?{hips:{...(pose.hips||{}),y:hipsY}}:{})},null,0).replace(/},"/g,'},\n"');
+  syncSliders();
+}
+function syncSliders(){for(const n in C.rig.parts){const r=document.getElementById('s_'+n);if(!r)continue;const v=Math.round((pose[n]||{}).rot||0);r.value=v;document.getElementById('n_'+n).value=v;r.parentElement.classList.toggle('sel',sel===n);}
+  $('#hipsY').value=hipsY;$('#hipsYn').value=hipsY;$('#lean').value=lean;$('#leann').value=lean;
+  $('#selInfo').innerHTML=sel?`<b>${sel}</b> parent=${C.rig.parts[sel].parent||'—'}<br>pivot=[${piv(sel).map(v=>+v.toFixed(1))}] limits=[${C.rig.parts[sel].rotation}]<br>rot=${((pose[sel]||{}).rot||0).toFixed(1)}`:'—';}
+function buildSliders(){const box=$('#sliders');box.innerHTML='';for(const n in C.rig.parts){const p=C.rig.parts[n];if(!p.parent&&n==='hips')continue;const lim=p.rotation||[-180,180];
+  box.insertAdjacentHTML('beforeend',`<div class="row"><label title="${n}">${n}</label><input id="s_${n}" type="range" min="${lim[0]}" max="${lim[1]}" value="0"><input id="n_${n}" type="number" value="0"></div>`);
+  const r=document.getElementById('s_'+n),num=document.getElementById('n_'+n);const set=v=>{pose[n]={...(pose[n]||{}),rot:+v};sel=n;render();};r.oninput=e=>set(e.target.value);num.onchange=e=>set(e.target.value);}}
+// --- dragging ---
+let drag=null;
+$('#svg').addEventListener('pointerdown',e=>{const j=e.target.dataset.j;if(!j)return;sel=j;const pt=svgPt(e);
+  const w=rootM().multiply(worldM(j));const [px,py]=piv(j);const c=w.transformPoint(new DOMPoint(px,py));
+  drag={j,startAng:Math.atan2(pt.y-c.y,pt.x-c.x),startRot:(pose[j]||{}).rot||0,shift:e.shiftKey};e.target.setPointerCapture(e.pointerId);render();});
+$('#svg').addEventListener('pointermove',e=>{if(!drag)return;const pt=svgPt(e);const j=drag.j;
+  if($('#pivotMode').checked){ // move pivot in part's local coords
+    const w=rootM().multiply(worldM(j));const inv=w.inverse();const lp=inv.transformPoint(new DOMPoint(pt.x,pt.y));
+    (rigPatch[cur]=rigPatch[cur]||{})[j]=[+lp.x.toFixed(1),+lp.y.toFixed(1)];render();return;}
+  const par=C.rig.parts[j].parent;
+  const isEnd=/^(larm|shin|shoe|hand)_/.test(j);
+  if($('#ikMode').checked&&!drag.shift&&isEnd&&par&&/^(uarm|thigh|shin)_/.test(par)){ ik2(j,pt);render();return;}
+  // rotate about own pivot: compute angle in parent space
+  const wp=rootM().multiply(par?worldM(par):new DOMMatrix());const [px,py]=piv(j);const c=wp.transformPoint(new DOMPoint(px,py));
+  const a=Math.atan2(pt.y-c.y,pt.x-c.x);let rot=drag.startRot+(a-drag.startAng)/d2r;
+  // parent-space angle vs screen: parent's world may be rotated/flipped; use delta only (fine for small mirror)
+  pose[j]={...(pose[j]||{}),rot:CLAMP(rot,C.rig.parts[j].rotation)};render();});
+$('#svg').addEventListener('pointerup',()=>drag=null);
+function svgPt(e){const s=$('#svg');const p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(s.getScreenCTM().inverse());}
+// 2-bone IK: end part j (e.g. larm_f) with parent upper (uarm_f). Target = end-effector tip (child pivot or part's far pivot).
+function ik2(j,target){const up=C.rig.parts[j].parent;const gp=C.rig.parts[up].parent;
+  const Wg=rootM().multiply(gp?worldM(gp):new DOMMatrix());
+  const A=Wg.transformPoint(new DOMPoint(...piv(up)));            // shoulder in screen
+  const upRot0=(pose[up]||{}).rot||0, jRot0=(pose[j]||{}).rot||0;
+  const B0=rootM().multiply(worldM(up)).transformPoint(new DOMPoint(...piv(j)));  // elbow
+  const child=Object.keys(C.rig.parts).find(k=>C.rig.parts[k].parent===j);
+  const tipLocal=child?piv(child):[piv(j)[0],piv(j)[1]+ (Math.hypot(B0.x-A.x,B0.y-A.y)/C.scale)];
+  const T0=rootM().multiply(worldM(j)).transformPoint(new DOMPoint(...tipLocal));
+  const l1=Math.hypot(B0.x-A.x,B0.y-A.y), l2=Math.hypot(T0.x-B0.x,T0.y-B0.y);
+  let dx=target.x-A.x,dy=target.y-A.y,d=Math.hypot(dx,dy);d=Math.min(d,l1+l2-0.01);d=Math.max(d,Math.abs(l1-l2)+0.01);
+  const bendSign=/thigh|shin/.test(up)?1:-1; // knee back, elbow forward-ish; user can shift-drag to fix
+  const a1=Math.atan2(dy,dx)-bendSign*Math.acos((l1*l1+d*d-l2*l2)/(2*l1*d));
+  const B=[A.x+l1*Math.cos(a1),A.y+l1*Math.sin(a1)];
+  // current screen angles
+  const a1cur=Math.atan2(B0.y-A.y,B0.x-A.x), a2cur=Math.atan2(T0.y-B0.y,T0.x-B0.x), a2=Math.atan2(target.y-B[1],target.x-B[0]);
+  const flip=(rootM().a<0)?-1:1;
+  pose[up]={...(pose[up]||{}),rot:CLAMP(upRot0+flip*(a1-a1cur)/d2r,C.rig.parts[up].rotation)};
+  pose[j]={...(pose[j]||{}),rot:CLAMP(jRot0+flip*((a2-a2cur)-(a1-a1cur))/d2r,C.rig.parts[j].rotation)};}
+// --- keys / timeline ---
+function renderKeys(){keys.sort((a,b)=>a.t-b.t);const box=$('#keys');box.innerHTML=keys.map((k,i)=>`<div class="key ${i===selKey?'sel':''}" data-i="${i}"><b>${k.name}</b><small>${k.t.toFixed(2)}s · ${k.ease}</small></div>`).join('');
+  box.querySelectorAll('.key').forEach(el=>el.onclick=()=>{selKey=+el.dataset.i;loadKey(selKey);});
+  $('#scrub').max=Math.max(1,...keys.map(k=>k.t+1));}
+function loadKey(i){const k=keys[i];pose=JSON.parse(JSON.stringify(k.pose));hipsY=k.hipsY||0;lean=k.lean||0;face=k.face||'';$('#faceSel').value=face;$('#keyName').value=k.name;$('#keyTime').value=k.t;$('#keyEase').value=k.ease;render();renderKeys();}
+$('#addKey').onclick=()=>{const name=$('#keyName').value.trim()||'pose';const t=+$('#keyTime').value;const k={name,t,ease:$('#keyEase').value,pose:JSON.parse(JSON.stringify(pose)),hipsY,lean,face};
+  const i=keys.findIndex(x=>x.name===name&&Math.abs(x.t-t)<1e-6);if(i>=0)keys[i]=k;else keys.push(k);renderKeys();selKey=keys.indexOf(k);renderKeys();log('key saved: '+name+' @'+t+'s');};
+$('#delKey').onclick=()=>{if(selKey>=0){keys.splice(selKey,1);selKey=-1;renderKeys();}};
+// scrub = interpolate between keys (same lerp as Rig.tsx: linear on rot with ease)
+const EASE={linear:p=>p,inOut:p=>p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2,out:p=>1-Math.pow(1-p,3),in:p=>p*p*p,backOut:p=>1+2.70158*Math.pow(p-1,3)+1.70158*Math.pow(p-1,2)};
+function sample(t){if(!keys.length)return;let a=keys[0],b=keys[0];for(const k of keys){if(k.t<=t)a=k;if(k.t>=t){b=k;break;}b=k;}
+  const p=b.t>a.t?EASE[b.ease]((t-a.t)/(b.t-a.t)):1;const names=new Set([...Object.keys(a.pose),...Object.keys(b.pose)]);pose={};
+  for(const n of names){const ra=(a.pose[n]||{}).rot||0,rb=(b.pose[n]||{}).rot||0;pose[n]={rot:ra+(rb-ra)*p};}
+  hipsY=(a.hipsY||0)+((b.hipsY||0)-(a.hipsY||0))*p;lean=(a.lean||0)+((b.lean||0)-(a.lean||0))*p;render();}
+$('#scrub').oninput=e=>{$('#scrubT').textContent=(+e.target.value).toFixed(2);sample(+e.target.value);};
+let playing=null;$('#play').onclick=()=>{if(playing){clearInterval(playing);playing=null;$('#play').textContent='▶ preview';return;}
+  let t=0;const end=+$('#scrub').max;$('#play').textContent='■ stop';playing=setInterval(()=>{t+=1/30;if(t>end)t=0;$('#scrub').value=t;$('#scrubT').textContent=t.toFixed(2);sample(t);},1000/30);};
+// --- save / load ---
+function download(name,obj){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,1)],{type:'application/json'}));a.download=name;a.click();}
+$('#saveBtn').onclick=()=>download('poses.json',{character:cur,keys,rigPatch:rigPatch[cur]||{},exported:new Date().toISOString()});
+$('#saveRigBtn').onclick=()=>download('rig_patch.json',rigPatch);
+$('#loadBtn').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{const f=e.target.files[0];const r=new FileReader();r.onload=()=>{const o=JSON.parse(r.result);if(o.keys){if(o.character&&RIGS[o.character]){$('#charSel').value=o.character;setChar(o.character);}keys=o.keys;if(o.rigPatch)rigPatch[cur]=o.rigPatch;renderKeys();if(keys.length){selKey=0;loadKey(0);}}else{Object.assign(rigPatch,o);render();}log('loaded '+f.name);};r.readAsText(f);};
+$('#applyJson').onclick=()=>{try{const o=JSON.parse($('#poseJson').value);pose=o;if(o.hips&&o.hips.y!=null){hipsY=o.hips.y;}render();}catch(err){log('bad JSON')}};
+$('#hipsY').oninput=e=>{hipsY=+e.target.value;render();};$('#hipsYn').onchange=e=>{hipsY=+e.target.value;render();};
+$('#lean').oninput=e=>{lean=+e.target.value;render();};$('#leann').onchange=e=>{lean=+e.target.value;render();};
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='r'){pose={};hipsY=0;lean=0;render();}
+  if(e.key==='m'){const np={};for(const n in pose){const m=n.endsWith('_f')?n.replace(/_f$/,'_b'):n.endsWith('_b')?n.replace(/_b$/,'_f'):n;np[m]=pose[n];}pose=np;render();}
+  if(e.key==='ArrowLeft'&&selKey>0){selKey--;loadKey(selKey);}if(e.key==='ArrowRight'&&selKey<keys.length-1){selKey++;loadKey(selKey);}
+  if(e.key==='Delete'){$('#delKey').click();}});
+function log(m){$('#log').textContent=m;setTimeout(()=>$('#log').textContent='',2500);}
+// --- boot ---
+function setChar(id){cur=id;C=RIGS[id];const p=C.rig.parts;const h=Math.abs((C.rig.foot[1])-Math.min(...Object.values(p).map(x=>x.pivot[1])));C.scale=Math.min(600/h,2.5);
+  if(id.includes('tort'))C.scale=0.5;if(id.includes('hare'))C.scale=2.2;if(id.includes('kwest'))C.scale=0.8;
+  pose={};hipsY=0;lean=0;sel=null;buildSliders();
+  $('#faceSel').innerHTML='<option value="">(default)</option>'+C.faces.map(f=>`<option>${f}</option>`).join('');$('#faceSel').onchange=e=>face=e.target.value;render();}
+fetch('rigs.json').then(r=>r.json()).then(j=>{RIGS=j;$('#charSel').innerHTML=Object.keys(j).map(k=>`<option>${k}</option>`).join('');$('#charSel').onchange=e=>setChar(e.target.value);setChar(Object.keys(j)[0]);});
+</script></body></html>
