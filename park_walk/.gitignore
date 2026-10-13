@@ -1,0 +1,5 @@
+node_modules/
+.cache/
+out/
+render/.build/
+.DS_Store
