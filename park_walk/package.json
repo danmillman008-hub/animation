@@ -1,0 +1,26 @@
+{
+  "name": "park-walk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GSAP-rigged cartoon character walking a dog in a park, rendered with Remotion",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render ParkWalk out/park_walk.mp4",
+    "still": "remotion still ParkWalk out/still.png --frame=90",
+    "render:offline": "node render/headless_render.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "gsap": "^3.13.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@sparticuz/chromium": "^153.0.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.8.0"
+  }
+}
