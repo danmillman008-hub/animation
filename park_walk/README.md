@@ -96,7 +96,9 @@ Conventions that keep it deterministic and QA-able:
 
 ## The long film — `LongWalk` (10 minutes)
 
-`videos/day_in_the_park.mp4` — 600 s @ 24 fps (14 400 frames), one continuous GSAP
+`videos/day_in_the_park.mp4` (full-quality master, ~200 MB, kept out of git) and
+`videos/day_in_the_park_web.mp4` (same film, CRF-30 web copy, ~36 MB, committed) —
+600 s @ 24 fps (14 400 frames), one continuous GSAP
 master timeline (1 279 child tweens/timelines, built in ~0.4 s), rendered by Remotion.
 
 Story (original): *a day in the park* — dawn mist and a snail → a girl and her dog
