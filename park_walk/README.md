@@ -73,6 +73,27 @@ Conventions that keep it deterministic and QA-able:
   planted-foot slide/lift for both characters, dog cadence, leash span, framing.
   Current status: **PASS, 0 warnings**.
 
+## Quality pass 2 — light, atmosphere, raster→vector
+
+- **Camera**: handheld wiggle reduced to ±0.16° with a 3-wiggle `easeInOut` CustomWiggle —
+  a calm drift instead of a shake.
+- **Light & atmosphere**: 4-stop sky, god-ray shafts off the sun, horizon haze band,
+  dappled light pools on the path, floating pollen motes, wind sway on every tuft,
+  flower and tree (all pure functions of `t`, so still deterministic).
+- **Depth of field**: `feGaussianBlur` on the far hills/treeline (1.4) and the foreground
+  verge (2.6) — the eye stays on the characters.
+- **Cel shading**: shade-side + sun-rim strokes on both characters, chin shadow,
+  belly shadow and back rim on the dog; cast shadows under trees, bench, lamps, bushes.
+- **Paper grain**: full-frame `feTurbulence` overlay at 6.5% (vector, seed-locked, no asset).
+- **Raster → vector pipeline** (`tools/trace_vignette.py`): an AI-generated flat
+  illustration (`assets/vignette_src.png`) is magenta-keyed, colour-quantised to 12
+  layers, contour-extracted with OpenCV (holes included) and Douglas-Peucker-simplified
+  into `src/scene/EndVignette.tsx` — 3 310 polygon points of pure SVG that ships as the
+  end-card emblem. Re-run it with:
+  `python3 tools/trace_vignette.py assets/vignette_src.png src/scene/EndVignette.tsx`
+- **Finale staging**: anticipation crouch before the leap, dust puffs on sit & landing,
+  title rise + draw-on rule on the end card.
+
 ## Skills used
 
 Installed with `npx skills add greensock/gsap-skills` + `npx skills add remotion-dev/skills`

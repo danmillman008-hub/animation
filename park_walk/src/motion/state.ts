@@ -163,7 +163,7 @@ export function createState(): SceneState {
     wing: 0,
   }));
 
-  const dust: Dust[] = Array.from({length: 4}, () => ({x: 0, y: DUST_Y, s: 0.2, o: 0}));
+  const dust: Dust[] = Array.from({length: 8}, () => ({x: 0, y: DUST_Y, s: 0.2, o: 0}));
 
   return {
     world: {
@@ -180,6 +180,8 @@ export function createState(): SceneState {
       warm: 0.22,
       wind: 0.2,
       title: 0,
+      rule: 0,
+      titleY: 30,
     },
     human: {
       x: HUMAN_X,

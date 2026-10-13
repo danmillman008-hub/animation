@@ -62,6 +62,9 @@ export const HumanFigure: React.FC<{h: HumanState}> = ({h}) => {
         />
         <path d="M 12 -96 L 27 -84 L 27 -8 Q 18 -4 10 -4 Z" fill={C.shirtShade} opacity={0.5} />
         <path d="M -12 -96 Q 0 -88 12 -96 L 8 -100 Q 0 -94 -8 -100 Z" fill={C.shirtShade} />
+        {/* cel shading: shade side + sun rim on the shirt */}
+        <path d="M -20 -86 Q -27 -44 -23 0 L -10 0 Q -16 -44 -11 -84 Z" fill={C.shirtShade} opacity={0.55} />
+        <path d="M 17 -82 Q 23 -42 19 -2" stroke="#ffd9a0" strokeWidth={3.4} strokeLinecap="round" fill="none" opacity={0.4} />
         {/* scarf: a small neck band with one fluttering tail (follow-through) */}
         <g transform={`translate(0 ${-92})`}>
           <path d="M -13 -4 Q 0 6 13 -4 L 13 4 Q 0 12 -13 4 Z" fill={C.scarf} />
@@ -99,6 +102,10 @@ export const HumanFigure: React.FC<{h: HumanState}> = ({h}) => {
                 <circle cx={-5} cy={28} r={5.5} fill={C.hairLit} />
               </Joint>
             </Joint>
+            {/* chin shadow falling on the neck */}
+            <ellipse cx={-2} cy={26} rx={12} ry={5} fill={C.skinShade} opacity={0.4} />
+            {/* sun rim on the hair */}
+            <path d="M 8 -72 Q 30 -62 32 -42" stroke={C.hairLit} strokeWidth={4.5} strokeLinecap="round" fill="none" opacity={0.65} />
             {/* back hair */}
             <path d="M -34 -30 Q -40 -66 -6 -76 Q 26 -84 34 -56 Q 38 -42 32 -34 Q 20 -60 -6 -58 Q -28 -54 -26 -28 Z" fill={C.hair} />
             {/* head */}

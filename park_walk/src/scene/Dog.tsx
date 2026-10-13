@@ -94,6 +94,9 @@ export const DogFigure: React.FC<{d: DogState}> = ({d}) => {
           <path d="M -80 -24 Q -46 -36 -4 -26 Q -44 -30 -80 -24 Z" fill={C.furCream} opacity={0.5} />
           <ellipse cx={-46} cy={19} rx={26} ry={8} fill={C.furCream} opacity={0.65} />
           <circle cx={8} cy={8} r={14} fill={C.furCream} />
+          {/* belly shadow + sun rim along the back */}
+          <path d="M -72 26 Q -42 34 -14 25" stroke={C.furShade} strokeWidth={6} strokeLinecap="round" fill="none" opacity={0.3} />
+          <path d="M -70 -28 Q -30 -38 6 -30" stroke="#ffe9c4" strokeWidth={4} strokeLinecap="round" fill="none" opacity={0.45} />
           {/* haunch crease: separates the thigh mass from the ribcage */}
           <path d="M -64 -22 Q -52 2 -62 26" stroke={C.furShade} strokeWidth={3.5} fill="none" opacity={0.5} />
           <path d="M -104 12 Q -88 26 -70 20" stroke={C.furShade} strokeWidth={3} fill="none" opacity={0.4} />
@@ -138,6 +141,9 @@ export const DogFigure: React.FC<{d: DogState}> = ({d}) => {
               <circle cx={2.4} cy={-1} r={1.2} fill="#ffffff" />
             </g>
             <path d={`M 10 ${-28 - d.brow} Q 16 ${-31 - d.brow} 22 ${-28 - d.brow}`} stroke={C.furDark} strokeWidth={3} strokeLinecap="round" fill="none" />
+            {/* sun rim on the skull + cheek shade */}
+            <path d="M 10 -30 Q 24 -26 30 -14" stroke="#ffe9c4" strokeWidth={3.2} strokeLinecap="round" fill="none" opacity={0.5} />
+            <path d="M 4 0 Q 12 7 22 5" stroke={C.furShade} strokeWidth={3} strokeLinecap="round" fill="none" opacity={0.3} />
             {/* top tuft */}
             <path d="M -6 -26 Q -2 -35 6 -31 Q 2 -28 4 -24 Z" fill={C.fur} />
             {/* near ear */}

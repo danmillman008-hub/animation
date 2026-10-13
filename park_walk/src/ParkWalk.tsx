@@ -5,6 +5,7 @@ import {Background} from './scene/Background';
 import {DogFigure} from './scene/Dog';
 import {DustDefs, FxLayer, Leash, Shadows} from './scene/Fx';
 import {HumanFigure} from './scene/Human';
+import {EndVignette} from './scene/EndVignette';
 import {C} from './scene/palette';
 
 /**
@@ -34,7 +35,7 @@ export const ParkWalkScene: React.FC<{frame: number; fps?: number}> = ({frame, f
         </defs>
 
         <g transform={camera}>
-          <Background distance={w.distance} cloud={w.cloud} wind={w.wind} sun={w.sun} warm={w.warm} />
+          <Background distance={w.distance} cloud={w.cloud} wind={w.wind} sun={w.sun} warm={w.warm} t={frame / fps} />
           <Shadows s={s} />
           <DogFigure d={s.dog} />
           <Leash s={s} />
@@ -42,20 +43,40 @@ export const ParkWalkScene: React.FC<{frame: number; fps?: number}> = ({frame, f
           <FxLayer s={s} />
         </g>
 
-        {/* grade */}
+        {/* grade + vector paper grain (feTurbulence: deterministic, no asset) */}
+        <filter id="grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves={2} seed={7} stitchTiles="stitch" />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
         <rect width={1920} height={1080} fill="#ff9a3c" opacity={w.warm * 0.2} style={{mixBlendMode: 'overlay'}} />
         <rect width={1920} height={1080} fill="url(#vignette)" opacity={w.vignette} />
         <rect width={1920} height={1080} fill={C.cream} opacity={w.fade} />
+        <rect width={1920} height={1080} filter="url(#grain)" opacity={0.065} style={{mixBlendMode: 'overlay'}} />
 
         {/* end card */}
-        <g opacity={w.title} fontFamily="'Trebuchet MS', 'DejaVu Sans', sans-serif" textAnchor="middle">
-          <text x={960} y={486} fontSize={104} fontWeight={700} fill={C.ink} letterSpacing={2}>
-            a walk in the park
-          </text>
-          <text x={960} y={560} fontSize={38} fill={C.ink} opacity={0.72} letterSpacing={6}>
-            GSAP TIMELINE × REMOTION RENDER
-          </text>
-          <path d="M 760 606 L 1160 606" stroke={C.scarf} strokeWidth={6} strokeLinecap="round" />
+        <g opacity={Math.max(0, (w.title - 0.25) / 0.75)}>
+          <EndVignette x={960 - 150} y={118} w={300} />
+        </g>
+        <g fontFamily="'Trebuchet MS', 'DejaVu Sans', sans-serif" textAnchor="middle">
+          <g opacity={w.title} transform={`translate(0 ${w.titleY})`}>
+            <text x={960} y={486} fontSize={104} fontWeight={700} fill={C.ink} letterSpacing={2}>
+              a walk in the park
+            </text>
+          </g>
+          <g opacity={Math.max(0, (w.title - 0.3) / 0.7)}>
+            <text x={960} y={560} fontSize={38} fill={C.ink} opacity={0.72} letterSpacing={6}>
+              GSAP TIMELINE × REMOTION RENDER
+            </text>
+            <path
+              d="M 760 606 L 1160 606"
+              stroke={C.scarf}
+              strokeWidth={6}
+              strokeLinecap="round"
+              pathLength={1}
+              strokeDasharray={1}
+              strokeDashoffset={1 - w.rule}
+            />
+          </g>
         </g>
       </svg>
     </AbsoluteFill>

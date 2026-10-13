@@ -463,7 +463,7 @@ export function buildTimeline(s: SceneState): gsap.core.Timeline {
   CustomEase.create('stroll', 'M0,0 C0.08,0.02 0.14,0.22 0.22,0.34 0.42,0.62 0.6,0.72 0.78,0.84 0.9,0.92 0.96,1 1,1');
   CustomEase.create('pushIn', 'M0,0 C0.3,0 0.42,0.42 0.58,0.66 0.74,0.9 0.86,1 1,1');
   CustomEase.create('settle', 'M0,0 C0.16,0.62 0.28,1.12 0.44,1.02 0.6,0.92 0.72,1 1,1');
-  CustomWiggle.create('handheld', {wiggles: 7, type: 'random'});
+  CustomWiggle.create('handheld', {wiggles: 3, type: 'easeInOut'});
   CustomWiggle.create('flutter', {wiggles: 12, type: 'uniform'});
 
   const tl = gsap.timeline({paused: true, defaults: {ease: 'sine.inOut'}});
@@ -475,6 +475,8 @@ export function buildTimeline(s: SceneState): gsap.core.Timeline {
   tl.fromTo(w, {fade: 1}, {fade: 0, duration: 0.85, ease: 'power2.out'}, 'fadeIn');
   tl.to(w, {fade: 1, duration: 1.05, ease: 'power2.in'}, 'outro');
   tl.to(w, {title: 1, duration: 0.85, ease: 'power2.out'}, 'outro+=0.15');
+  tl.fromTo(w, {titleY: 30}, {titleY: 0, duration: 0.95, ease: 'power3.out'}, 'outro+=0.15');
+  tl.fromTo(w, {rule: 0}, {rule: 1, duration: 0.7, ease: 'power2.inOut'}, 'outro+=0.3');
   absProp(tl, w as unknown as Record<string, number>, 'warm', [
     [0, 0.18],
     [4, 0.24],
@@ -514,7 +516,7 @@ export function buildTimeline(s: SceneState): gsap.core.Timeline {
     [DURATION_SEC, -120],
   ]);
   // Handheld micro-drift on top of the authored move.
-  tl.fromTo(w, {camRot: -0.5}, {camRot: 0.5, duration: DURATION_SEC, ease: 'handheld'}, 0);
+  tl.fromTo(w, {camRot: -0.16}, {camRot: 0.16, duration: DURATION_SEC, ease: 'handheld'}, 0);
   tl.fromTo(w, {sun: 0}, {sun: 1, duration: DURATION_SEC, ease: 'flutter'}, 0);
 
   /* ---------------- 3. the walk: gait cycles + ground distance ---------------- */
@@ -709,6 +711,11 @@ export function buildTimeline(s: SceneState): gsap.core.Timeline {
     repeat: 9,
   }, 'sit+=0.38');
 
+  tl.fromTo(fx.dust[2], {x: 946, y: 900, s: 0.3, o: 0.5}, {x: 896, y: 878, s: 1.7, o: 0, duration: 0.55, ease: 'power2.out'}, 'sit+=0.06');
+  tl.fromTo(fx.dust[3], {x: 1046, y: 900, s: 0.3, o: 0.42}, {x: 1092, y: 880, s: 1.5, o: 0, duration: 0.55, ease: 'power2.out'}, 'sit+=0.1');
+  tl.fromTo(fx.dust[4], {x: 918, y: 900, s: 0.3, o: 0.55}, {x: 862, y: 874, s: 1.9, o: 0, duration: 0.6, ease: 'power2.out'}, 'pat+=1.32');
+  tl.fromTo(fx.dust[5], {x: 986, y: 900, s: 0.3, o: 0.5}, {x: 1040, y: 876, s: 1.7, o: 0, duration: 0.6, ease: 'power2.out'}, 'pat+=1.36');
+
   /* ---------------- 8b. settle to a neutral stand when the walk ends --------
      The cyclic gait freezes mid-stride; ease every limb back to neutral so the
      finale poses (sit, leap, pat) start from a clean body. */
@@ -726,6 +733,9 @@ export function buildTimeline(s: SceneState): gsap.core.Timeline {
   tl.to(h.larmB as unknown as Record<string, number>, {r: 6, duration: 0.5, ease: 'power2.inOut'}, 'stop+=0.1');
 
   /* ---------------- 9. the pat: the dog leaps up into the hand ---------------- */
+  tl.to(d as unknown as Record<string, number>, {bounceAdd: 16, duration: 0.3, ease: 'power2.in'}, 'pat-=0.32');
+  tl.to(d as unknown as Record<string, number>, {earPerk: -8, duration: 0.3, ease: 'power2.in'}, 'pat-=0.32');
+  tl.to(d as unknown as Record<string, number>, {earPerk: 14, duration: 0.34, ease: 'back.out(3)'}, 'pat');
   tl.to(d as unknown as Record<string, number>, {x: 906, duration: 0.42, ease: 'power2.out'}, 'pat');
   tl.to(d as unknown as Record<string, number>, {bounceAdd: -54, duration: 0.38, ease: 'power2.out'}, 'pat');
   tl.to(d as unknown as Record<string, number>, {neckTurn: -12, duration: 0.4, ease: 'power2.out'}, 'pat');
